@@ -3,7 +3,7 @@ module.exports = {
     {
       name: "stockwallah-backend",
       cwd: "/var/www/stockwallah/backend",
-      script: "dist/index.js",
+      script: "dist/src/index.js",
       interpreter: "node",
       env: {
         NODE_ENV: "production",
