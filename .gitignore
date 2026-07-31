@@ -12,3 +12,4 @@ tmp/
 *.log
 *.tsbuildinfo
 qa-*.png
+.deploy/
