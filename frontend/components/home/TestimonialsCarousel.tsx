@@ -15,20 +15,20 @@ export function TestimonialsCarousel() {
   const active = testimonials[index];
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-16">
+    <section className="mx-auto max-w-7xl px-4 py-10 sm:py-14 lg:py-16">
       <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
         <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-gold-primary">Student Success</p>
-          <h2 className="mt-3 font-display text-4xl font-bold text-white-primary">Built by Consistency, Not Noise</h2>
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gold-primary sm:text-sm sm:tracking-[0.18em]">Student Success</p>
+          <h2 className="mt-3 font-display text-3xl font-bold text-white-primary sm:text-4xl">Built by Consistency, Not Noise</h2>
           <p className="mt-4 text-white-secondary">Real learners, real routines, and a process that survives market volatility.</p>
         </div>
-        <div className="card min-h-[280px] p-7">
+        <div className="card min-h-[260px] p-5 sm:min-h-[280px] sm:p-7">
           <div className="mb-6 flex gap-1 text-gold-primary">
             {Array.from({ length: active.rating }).map((_, star) => (
               <Star key={star} size={20} fill="currentColor" />
             ))}
           </div>
-          <p className="text-2xl leading-9 text-white-primary">&ldquo;{active.quote}&rdquo;</p>
+          <p className="text-lg leading-7 text-white-primary sm:text-2xl sm:leading-9">&ldquo;{active.quote}&rdquo;</p>
           <div className="mt-8 flex items-center justify-between gap-4">
             <div>
               <h3 className="font-semibold text-white-primary">{active.name}</h3>

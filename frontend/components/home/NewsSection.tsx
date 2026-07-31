@@ -10,13 +10,13 @@ export function NewsSection() {
   const articles = data || [];
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-16">
-      <div className="mb-9 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+    <section className="mx-auto max-w-7xl px-4 py-10 sm:py-14 lg:py-16">
+      <div className="mb-7 flex flex-col gap-5 sm:mb-9 md:flex-row md:items-end md:justify-between">
         <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-gold-primary">Live Market Feed</p>
-          <h2 className="mt-3 font-display text-4xl font-bold text-white-primary">Latest Market News</h2>
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gold-primary sm:text-sm sm:tracking-[0.18em]">Live Market Feed</p>
+          <h2 className="mt-3 font-display text-3xl font-bold text-white-primary sm:text-4xl">Latest Market News</h2>
         </div>
-        <GoldButton href="/news" variant="outline">
+        <GoldButton href="/news" variant="outline" className="w-full sm:w-auto">
           Full News Desk <ArrowRight size={18} />
         </GoldButton>
       </div>

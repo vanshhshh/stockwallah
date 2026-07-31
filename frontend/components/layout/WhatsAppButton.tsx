@@ -70,7 +70,7 @@ function FloatingLink({ href, label, className, side }: { href?: string; label: 
       href={href}
       target="_blank"
       rel="noreferrer"
-      className={`group relative inline-flex h-14 w-14 items-center justify-center rounded-full text-white shadow-[0_0_28px_rgba(0,0,0,0.35)] transition hover:scale-105 ${className}`}
+      className={`group relative inline-flex h-12 w-12 items-center justify-center rounded-full text-white shadow-[0_0_28px_rgba(0,0,0,0.35)] transition hover:scale-105 sm:h-14 sm:w-14 ${className}`}
       aria-label={label}
     >
       <SocialIcon label={label} />
@@ -88,13 +88,13 @@ export function WhatsAppButton() {
 
   return (
     <>
-      <div className="fixed bottom-5 right-5 z-40 grid gap-3">
+      <div className="fixed bottom-4 right-3 z-40 grid gap-2 sm:bottom-5 sm:right-5 sm:gap-3">
         <FloatingLink href={data?.playStoreUrl} label="Play Store" className="bg-black-surface ring-1 ring-white/15" side="right" />
         <FloatingLink href={data?.youtubeUrl || socialLinks.youtube} label="YouTube" className="bg-red-600" side="right" />
         <FloatingLink href={data?.instagramUrl || socialLinks.instagram} label="Instagram" className="bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400" side="right" />
         <FloatingLink href={whatsappHref} label="WhatsApp" className="bg-[#25D366]" side="right" />
       </div>
-      <div className="fixed bottom-5 left-5 z-40 grid gap-3">
+      <div className="fixed bottom-4 left-3 z-40 grid gap-2 sm:bottom-5 sm:left-5 sm:gap-3">
         <FloatingLink href={data?.appStoreUrl} label="App Store" className="bg-black-surface ring-1 ring-white/15" side="left" />
         <FloatingLink href={data?.telegramUrl || "https://t.me/stockwallahacademy"} label="Telegram" className="bg-[#26A5E4]" side="left" />
         <FloatingLink href={data?.linkedinUrl || socialLinks.linkedin} label="LinkedIn" className="bg-[#0A66C2]" side="left" />

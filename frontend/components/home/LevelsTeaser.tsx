@@ -11,19 +11,19 @@ export function LevelsTeaser() {
   const levels = data?.levels.slice(0, 3) || [];
 
   return (
-    <section className="border-y border-black-border bg-black-surface/45 py-16">
+    <section className="border-y border-black-border bg-black-surface/45 py-10 sm:py-14 lg:py-16">
       <div className="mx-auto max-w-7xl px-4">
-        <div className="mb-8 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+        <div className="mb-7 flex flex-col gap-5 sm:mb-8 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-gold-primary">8:30 AM Trading Setup</p>
-            <h2 className="mt-3 font-display text-4xl font-bold text-white-primary">Latest Daily Levels</h2>
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gold-primary sm:text-sm sm:tracking-[0.18em]">8:30 AM Trading Setup</p>
+            <h2 className="mt-3 font-display text-3xl font-bold text-white-primary sm:text-4xl">Latest Daily Levels</h2>
           </div>
-          <GoldButton href="/levels" variant="outline">
+          <GoldButton href="/levels" variant="outline" className="w-full sm:w-auto">
             Open Levels Tracker <ArrowRight size={18} />
           </GoldButton>
         </div>
         {isLoading ? (
-          <div className="grid gap-5 md:grid-cols-3">
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 3 }).map((_, index) => (
               <div key={index} className="card h-56 animate-pulse bg-black-elevated" />
             ))}
@@ -41,4 +41,3 @@ export function LevelsTeaser() {
     </section>
   );
 }
-

@@ -13,11 +13,11 @@ export function MarketOverview() {
   }
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-16">
-      <div className="mb-8 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+    <section className="mx-auto max-w-7xl px-4 py-10 sm:py-14 lg:py-16">
+      <div className="mb-7 flex flex-col gap-3 sm:mb-8 md:flex-row md:items-end md:justify-between">
         <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-gold-primary">Today&apos;s Market Overview</p>
-          <h2 className="mt-3 font-display text-4xl font-bold text-white-primary">Index Pulse</h2>
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gold-primary sm:text-sm sm:tracking-[0.18em]">Today&apos;s Market Overview</p>
+          <h2 className="mt-3 font-display text-3xl font-bold text-white-primary sm:text-4xl">Index Pulse</h2>
         </div>
         <p className="text-sm text-white-muted">As of {new Date(data.timestamp).toLocaleTimeString("en-IN", { timeZone: "Asia/Kolkata" })} IST</p>
       </div>
@@ -29,4 +29,3 @@ export function MarketOverview() {
     </section>
   );
 }
-

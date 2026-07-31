@@ -22,22 +22,22 @@ export function LevelCard({ level, symbol }: { level: TradingLevel; symbol: stri
   const positive = pnl.amount >= 0;
 
   return (
-    <div className="card p-5">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h3 className="text-lg font-semibold text-white-primary">
+    <div className="card min-w-0 p-4 sm:p-5">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+        <div className="min-w-0">
+          <h3 className="break-words text-base font-semibold text-white-primary sm:text-lg">
             {symbol} {level.levelType} @ {formatNumber(level.levelPrice)}
           </h3>
           <p className="mt-2 text-sm text-white-secondary">{level.notes || "Admin marked market reaction level"}</p>
         </div>
-        <span className="rounded bg-gold-muted px-2 py-1 text-xs font-semibold text-gold-light">{level.levelType}</span>
+        <span className="w-fit rounded bg-gold-muted px-2 py-1 text-xs font-semibold text-gold-light">{level.levelType}</span>
       </div>
       <div className="mt-5 grid gap-3 text-sm md:grid-cols-2">
         <div className="rounded bg-black-primary p-3 text-white-secondary">Target: {level.targetPrice ? formatNumber(level.targetPrice) : "—"}</div>
         <div className="rounded bg-black-primary p-3 text-white-secondary">SL: {level.stoplossPrice ? formatNumber(level.stoplossPrice) : "—"}</div>
       </div>
       <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-black-border pt-4">
-        <div className={cn("inline-flex items-center gap-2 rounded px-3 py-2 text-sm font-semibold", pnl.status === "OPEN" ? "bg-black-elevated text-white-secondary" : positive ? "bg-profit/10 text-profit" : "bg-loss/10 text-loss")}>
+        <div className={cn("inline-flex min-w-0 flex-wrap items-center gap-2 rounded px-3 py-2 text-sm font-semibold", pnl.status === "OPEN" ? "bg-black-elevated text-white-secondary" : positive ? "bg-profit/10 text-profit" : "bg-loss/10 text-loss")}>
           <Target size={16} /> {pnl.status} {pnl.status !== "OPEN" ? `(${formatInr(pnl.amount)} / lot)` : ""}
         </div>
         {level.hitTime ? (
@@ -51,4 +51,3 @@ export function LevelCard({ level, symbol }: { level: TradingLevel; symbol: stri
     </div>
   );
 }
-

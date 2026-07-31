@@ -4,12 +4,12 @@ import { timeAgo } from "@/lib/utils";
 
 export function NewsCard({ article }: { article: NewsArticle }) {
   return (
-    <article className="card flex min-h-56 flex-col p-5 transition hover:border-gold-primary/45 hover:shadow-gold">
-      <div className="mb-4 flex items-center justify-between gap-4 text-xs text-white-muted">
+    <article className="card flex min-h-52 min-w-0 flex-col p-4 transition hover:border-gold-primary/45 hover:shadow-gold sm:min-h-56 sm:p-5">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3 text-xs text-white-muted">
         <span className="rounded bg-gold-muted px-2 py-1 text-gold-light">{article.category}</span>
         <span>{timeAgo(article.pubDate)}</span>
       </div>
-      <h3 className="line-clamp-2 text-lg font-semibold leading-7 text-white-primary">{article.title}</h3>
+      <h3 className="line-clamp-2 text-base font-semibold leading-6 text-white-primary sm:text-lg sm:leading-7">{article.title}</h3>
       <p className="mt-3 line-clamp-2 text-sm leading-6 text-white-secondary">{article.description}</p>
       <a
         href={article.link}
