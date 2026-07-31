@@ -1,0 +1,20 @@
+import axios from "axios";
+
+export const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+
+export const api = axios.create({
+  baseURL: API_URL,
+  withCredentials: true,
+  headers: {
+    "Content-Type": "application/json"
+  }
+});
+
+export type LeadPayload = {
+  name: string;
+  phone: string;
+  email: string;
+  source?: string;
+  timestamp?: string;
+};
+

@@ -1,0 +1,8 @@
+<svg width="220" height="48" viewBox="0 0 220 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="48" height="48" rx="8" fill="#111111"/>
+  <path d="M15 30L22 18L28 27L34 13" stroke="#C9A84C" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="60" y="32" fill="#FAFAFA" font-family="Playfair Display, serif" font-size="28" font-weight="700">Stock</text>
+  <text x="128" y="32" fill="#C9A84C" font-family="Playfair Display, serif" font-size="28" font-weight="700">W</text>
+  <text x="154" y="32" fill="#FAFAFA" font-family="Playfair Display, serif" font-size="28" font-weight="700">allah</text>
+</svg>
+

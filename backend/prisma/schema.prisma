@@ -1,0 +1,150 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Lead {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String
+  phone     String
+  source    String   @default("popup")
+  status    String   @default("new")
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Enrollment {
+  id         Int      @id @default(autoincrement())
+  name       String
+  email      String
+  phone      String
+  city       String?
+  course     String
+  mode       String
+  experience String?
+  query      String?
+  status     String   @default("pending")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model TradingLevel {
+  id            Int      @id @default(autoincrement())
+  date          DateTime @db.Date
+  symbol        String   @default("NIFTY")
+  levelPrice    Decimal  @db.Decimal(10, 2)
+  levelType     String
+  targetPrice   Decimal? @db.Decimal(10, 2)
+  stoplossPrice Decimal? @db.Decimal(10, 2)
+  notes         String?
+  isHit         Boolean  @default(false)
+  hitType       String?
+  hitTime       DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([date, symbol])
+}
+
+model ContactMessage {
+  id             Int      @id @default(autoincrement())
+  name           String
+  email          String
+  phone          String?
+  courseInterest String?
+  message        String
+  isRead         Boolean  @default(false)
+  createdAt      DateTime @default(now())
+}
+
+model AdminUser {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  passwordHash String
+  name         String
+  createdAt    DateTime @default(now())
+}
+
+model SiteSetting {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
+model YoutubeSchedule {
+  id          Int      @id @default(autoincrement())
+  title       String
+  scheduledAt DateTime
+  youtubeLink String?
+  isLive      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+}
+
+model Course {
+  id              Int      @id @default(autoincrement())
+  slug            String   @unique
+  title           String
+  category        String
+  level           String
+  description     String
+  duration        String
+  mode            String
+  price           Int
+  originalPrice   Int?
+  thumbnail       String?
+  enrollmentCount Int      @default(0)
+  rating          Decimal  @default(4.8) @db.Decimal(2, 1)
+  active          Boolean  @default(true)
+  curriculum      Json
+  learnings       Json
+  faqs            Json
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Testimonial {
+  id        Int      @id @default(autoincrement())
+  name      String
+  course    String
+  outcome   String
+  quote     String
+  rating    Int      @default(5)
+  videoUrl  String?
+  image     String?
+  createdAt DateTime @default(now())
+}
+
+model BlogPost {
+  id          Int      @id @default(autoincrement())
+  slug        String   @unique
+  title       String
+  excerpt     String
+  content     String
+  category    String
+  readMinutes Int
+  publishedAt DateTime @default(now())
+}
+
+model GalleryImage {
+  id        Int      @id @default(autoincrement())
+  title     String
+  imageUrl  String
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+model Banner {
+  id        Int      @id @default(autoincrement())
+  title     String
+  imageUrl  String
+  linkUrl   String?
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+}

@@ -1,0 +1,14 @@
+node_modules/
+.next/
+dist/
+coverage/
+.env
+.env.local
+.DS_Store
+npm-debug.log*
+docker-data/
+logs/
+tmp/
+*.log
+*.tsbuildinfo
+qa-*.png
