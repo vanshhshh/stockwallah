@@ -26,19 +26,19 @@ export default function MarketPage() {
   const isOpen = overview.data?.marketStatus.isOpen;
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-12">
+    <section className="mx-auto max-w-7xl px-4 py-10 sm:py-12">
       <div className="mb-8 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <h1 className="font-display text-5xl font-bold text-white-primary">Market Overview</h1>
-          <p className="mt-3 text-white-secondary">Nifty, Bank Nifty, Sensex, India VIX, top F&O movers, and sector performance.</p>
+          <h1 className="font-display text-3xl font-bold text-white-primary sm:text-5xl">Market Overview</h1>
+          <p className="mt-3 text-sm leading-6 text-white-secondary sm:text-base">Nifty, Bank Nifty, Sensex, India VIX, top F&O movers, and sector performance.</p>
         </div>
-        <div className="card flex flex-wrap items-center gap-4 px-4 py-3 text-sm text-white-secondary">
+        <div className="card flex w-full flex-wrap items-center gap-3 px-4 py-3 text-sm text-white-secondary lg:w-auto">
           <span className="inline-flex items-center gap-2">
             <span className={cn("h-2.5 w-2.5 rounded-full", isOpen ? "animate-pulse bg-profit" : "bg-white-muted")} />
             MARKET STATUS: {isOpen ? "OPEN" : "CLOSED"}
           </span>
           <span>Auto-refresh in: {Math.floor(countdown / 60)}:{String(countdown % 60).padStart(2, "0")}</span>
-          <button onClick={refresh} className="premium-focus inline-flex items-center gap-2 rounded border border-black-border px-3 py-2 hover:border-gold-primary/60">
+          <button onClick={refresh} className="premium-focus inline-flex min-h-10 w-full items-center justify-center gap-2 rounded border border-black-border px-3 py-2 hover:border-gold-primary/60 sm:w-auto">
             <RefreshCw size={15} className={overview.isFetching || movers.isFetching ? "animate-spin" : ""} /> Refresh Now
           </button>
         </div>
@@ -69,7 +69,7 @@ export default function MarketPage() {
           href="https://www.tradingview.com/heatmap/stock/#%7B%22dataSource%22%3A%22NSE%22%7D"
           target="_blank"
           rel="noreferrer"
-          className="card flex min-h-72 flex-col justify-end overflow-hidden p-6 transition hover:border-gold-primary/45 hover:shadow-gold"
+          className="card flex min-h-64 flex-col justify-end overflow-hidden p-4 transition hover:border-gold-primary/45 hover:shadow-gold sm:min-h-72 sm:p-6"
         >
           <div className="absolute" />
           <div className="mb-6 grid grid-cols-5 gap-2">
@@ -84,4 +84,3 @@ export default function MarketPage() {
     </section>
   );
 }
-

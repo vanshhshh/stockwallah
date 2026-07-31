@@ -4,11 +4,11 @@ import { academyDisclaimer, associateMentorProfile, mentorProfile } from "@/lib/
 
 export default function CertificationPage() {
   return (
-    <section className="mx-auto max-w-7xl px-4 py-12">
-      <div className="grid gap-10 lg:grid-cols-[1fr_420px] lg:items-center">
+    <section className="mx-auto max-w-7xl px-4 py-10 sm:py-12">
+      <div className="grid gap-8 lg:grid-cols-[1fr_420px] lg:items-center">
         <div>
-          <h1 className="font-display text-5xl font-bold text-white-primary">NISM Series VIII Learning Path</h1>
-          <p className="mt-5 text-lg leading-8 text-white-secondary">
+          <h1 className="font-display text-3xl font-bold leading-tight text-white-primary sm:text-5xl">NISM Series VIII Learning Path</h1>
+          <p className="mt-4 text-sm leading-6 text-white-secondary sm:mt-5 sm:text-lg sm:leading-8">
             Build derivatives knowledge with structured preparation, practical market context, and mentor support from the StockWallah team.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -19,13 +19,13 @@ export default function CertificationPage() {
           </div>
           <p className="mt-6 max-w-2xl text-sm leading-6 text-white-muted">{academyDisclaimer}</p>
         </div>
-        <div className="card p-8 text-center">
+        <div className="card p-5 text-center sm:p-8">
           <FileBadge className="mx-auto text-gold-primary" size={72} />
           <h2 className="mt-5 text-2xl font-semibold text-white-primary">Mentor Support</h2>
           <p className="mt-2 text-white-secondary">Guidance from {associateMentorProfile.name} and {mentorProfile.name} for disciplined derivatives learning.</p>
         </div>
       </div>
-      <div className="mt-14 grid gap-5 md:grid-cols-3">
+      <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:mt-14 lg:grid-cols-3">
         {[
           { icon: Award, title: "NISM Series VIII Prep", text: "Mock tests, formula revision, and equity derivatives concept clarity." },
           { icon: ShieldCheck, title: associateMentorProfile.certification, text: associateMentorProfile.summary },

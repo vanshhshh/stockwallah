@@ -20,17 +20,17 @@ export default function GalleryPage() {
   });
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-16">
-      <div className="mb-10 max-w-3xl">
-        <h1 className="font-display text-5xl font-bold text-white-primary md:text-6xl">Gallery</h1>
-        <p className="mt-4 text-lg leading-8 text-white-secondary">Photos and banners from StockWallah Trading Academy.</p>
+    <section className="mx-auto max-w-7xl px-4 py-10 sm:py-14 lg:py-16">
+      <div className="mb-8 max-w-3xl sm:mb-10">
+        <h1 className="font-display text-3xl font-bold text-white-primary sm:text-5xl lg:text-6xl">Gallery</h1>
+        <p className="mt-4 text-sm leading-6 text-white-secondary sm:text-lg sm:leading-8">Photos and banners from StockWallah Trading Academy.</p>
       </div>
 
       {(data?.banners || []).length ? (
         <div className="mb-10 grid gap-5">
           {data?.banners.map((banner) => {
             const image = (
-              <div className="relative aspect-[16/6] overflow-hidden rounded-sw border border-gold-primary/25 bg-black-surface">
+              <div className="relative aspect-[16/10] overflow-hidden rounded-sw border border-gold-primary/25 bg-black-surface sm:aspect-[16/6]">
                 <Image src={toSrc(banner.imageUrl)} alt={banner.title} fill sizes="100vw" className="object-cover" unoptimized />
               </div>
             );

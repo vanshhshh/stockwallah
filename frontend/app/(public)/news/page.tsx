@@ -25,13 +25,13 @@ export default function NewsPage() {
   return (
     <>
       <NewsTicker />
-      <section className="mx-auto max-w-7xl px-4 py-12">
+      <section className="mx-auto max-w-7xl px-4 py-10 sm:py-12">
         <div className="mb-8 max-w-3xl">
-          <h1 className="font-display text-5xl font-bold text-white-primary">Market News Desk</h1>
-          <p className="mt-4 text-lg leading-8 text-white-secondary">MoneyControl RSS-powered Indian market news with search, category filters, and auto-refresh every 10 minutes.</p>
+          <h1 className="font-display text-3xl font-bold text-white-primary sm:text-5xl">Market News Desk</h1>
+          <p className="mt-4 text-sm leading-6 text-white-secondary sm:text-lg sm:leading-8">MoneyControl RSS-powered Indian market news with search, category filters, and auto-refresh every 10 minutes.</p>
         </div>
         <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div className="flex flex-wrap gap-2">
+          <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
             {categories.map((item) => (
               <button
                 key={item}
@@ -82,4 +82,3 @@ export default function NewsPage() {
     </>
   );
 }
-

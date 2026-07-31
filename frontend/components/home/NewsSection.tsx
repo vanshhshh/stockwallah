@@ -21,7 +21,7 @@ export function NewsSection() {
         </GoldButton>
       </div>
       {isLoading ? (
-        <div className="grid gap-5 md:grid-cols-3">
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 6 }).map((_, index) => (
             <div key={index} className="card h-48 animate-pulse bg-black-elevated" />
           ))}
@@ -29,7 +29,7 @@ export function NewsSection() {
       ) : isError ? (
         <div className="card p-6 text-white-secondary">News feed is temporarily unavailable.</div>
       ) : (
-        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {articles.slice(0, 6).map((article) => (
             <NewsCard key={article.link} article={article} />
           ))}

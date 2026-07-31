@@ -18,11 +18,11 @@ export function CourseDetailClient({ course }: { course: Course }) {
   return (
     <div>
       <section className="border-b border-black-border bg-black-surface/45">
-        <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 lg:grid-cols-[1.15fr_0.85fr]">
-          <div>
+        <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:py-14 lg:grid-cols-[1.15fr_0.85fr] lg:py-16">
+          <div className="min-w-0">
             <div className="mb-4 inline-flex rounded border border-gold-primary/35 bg-gold-muted px-3 py-1 text-sm text-gold-light">{course.category}</div>
-            <h1 className="font-display text-5xl font-bold leading-tight text-white-primary md:text-6xl">{course.title}</h1>
-            <p className="mt-5 max-w-3xl text-lg leading-8 text-white-secondary">{course.description}</p>
+            <h1 className="font-display text-3xl font-bold leading-tight text-white-primary sm:text-5xl lg:text-6xl">{course.title}</h1>
+            <p className="mt-4 max-w-3xl text-sm leading-6 text-white-secondary sm:mt-5 sm:text-lg sm:leading-8">{course.description}</p>
             <div className="mt-7 flex flex-wrap gap-4 text-sm text-white-secondary">
               <span className="inline-flex items-center gap-2">
                 <Star size={17} fill="currentColor" className="text-gold-primary" /> {course.rating} rating
@@ -44,13 +44,13 @@ export function CourseDetailClient({ course }: { course: Course }) {
           </div>
         </div>
       </section>
-      <section className="mx-auto grid max-w-7xl gap-8 px-4 py-12 lg:grid-cols-[1fr_360px]">
-        <div>
+      <section className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:py-12 lg:grid-cols-[1fr_360px]">
+        <div className="min-w-0">
           <div className="mb-8 flex gap-2 overflow-x-auto border-b border-black-border pb-3 scrollbar-thin">
             {tabs.map((tab) => (
               <button
                 key={tab}
-                className={`premium-focus min-h-11 rounded px-4 text-sm font-semibold transition ${active === tab ? "bg-gold-muted text-gold-light" : "text-white-secondary hover:text-gold-light"}`}
+                className={`premium-focus min-h-11 shrink-0 rounded px-4 text-sm font-semibold transition ${active === tab ? "bg-gold-muted text-gold-light" : "text-white-secondary hover:text-gold-light"}`}
                 onClick={() => setActive(tab)}
               >
                 {tab}
@@ -59,7 +59,7 @@ export function CourseDetailClient({ course }: { course: Course }) {
           </div>
           {active === "Overview" ? (
             <div className="grid gap-8">
-              <div className="card p-6">
+              <div className="card p-4 sm:p-6">
                 <h2 className="text-2xl font-semibold text-white-primary">What you&apos;ll learn</h2>
                 <div className="mt-5 grid gap-4 md:grid-cols-2">
                   {[
@@ -74,7 +74,7 @@ export function CourseDetailClient({ course }: { course: Course }) {
                   ))}
                 </div>
               </div>
-              <div className="card p-6">
+              <div className="card p-4 sm:p-6">
                 <h2 className="text-2xl font-semibold text-white-primary">Requirements</h2>
                 <p className="mt-3 text-white-secondary">Laptop or mobile device, active demat account preferred, and a willingness to maintain a risk journal.</p>
               </div>
@@ -105,7 +105,7 @@ export function CourseDetailClient({ course }: { course: Course }) {
             </div>
           ) : null}
           {active === "Instructor" ? (
-            <div className="card p-6">
+            <div className="card p-4 sm:p-6">
               <h2 className="text-2xl font-semibold text-white-primary">StockWallah Mentor Desk</h2>
               <p className="mt-3 leading-7 text-white-secondary">
                 Led by {founderProfile.name}, {associateMentorProfile.name}, and {mentorProfile.name}, with practical market experience, derivatives support, and a focus on disciplined Indian market education.
@@ -113,10 +113,10 @@ export function CourseDetailClient({ course }: { course: Course }) {
             </div>
           ) : null}
           {active === "Reviews" ? (
-            <div className="card p-6">
+            <div className="card p-4 sm:p-6">
               <h2 className="text-2xl font-semibold text-white-primary">Rating Breakdown</h2>
               {[5, 4, 3, 2, 1].map((rating) => (
-                <div key={rating} className="mt-4 grid grid-cols-[60px_1fr_48px] items-center gap-3 text-sm text-white-secondary">
+                <div key={rating} className="mt-4 grid grid-cols-[54px_1fr_44px] items-center gap-2 text-sm text-white-secondary sm:grid-cols-[60px_1fr_48px] sm:gap-3">
                   <span>{rating} star</span>
                   <div className="h-2 rounded bg-black-primary">
                     <div className="h-2 rounded bg-gold-primary" style={{ width: `${rating === 5 ? 84 : rating === 4 ? 12 : 2}%` }} />
@@ -141,8 +141,8 @@ export function CourseDetailClient({ course }: { course: Course }) {
             </div>
           ) : null}
         </div>
-        <aside className="h-fit rounded-sw border border-black-border bg-black-surface p-6 shadow-deep lg:sticky lg:top-32">
-          <div className="text-4xl font-bold text-white-primary">{formatInr(course.price)}</div>
+        <aside className="h-fit rounded-sw border border-black-border bg-black-surface p-4 shadow-deep sm:p-6 lg:sticky lg:top-32">
+          <div className="text-3xl font-bold text-white-primary sm:text-4xl">{formatInr(course.price)}</div>
           {hasDiscount ? (
             <div className="mt-1 flex items-center gap-3">
               <span className="text-white-muted line-through">{formatInr(course.originalPrice)}</span>

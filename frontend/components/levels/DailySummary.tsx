@@ -18,21 +18,20 @@ export function DailySummary({ levels, symbol }: { levels: TradingLevel[]; symbo
   ];
 
   return (
-    <div className="card p-5">
-      <div className="grid gap-4 md:grid-cols-4">
+    <div className="card p-4 sm:p-5">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
         {stats.map(({ label, value, icon: Icon, color }) => (
-          <div key={label} className="rounded bg-black-primary p-4">
+          <div key={label} className="rounded bg-black-primary p-3 sm:p-4">
             <Icon size={20} className={color} />
-            <div className="mt-3 text-2xl font-bold text-white-primary">{value}</div>
+            <div className="mt-3 text-xl font-bold text-white-primary sm:text-2xl">{value}</div>
             <div className="text-sm text-white-muted">{label}</div>
           </div>
         ))}
       </div>
       <div className="mt-4 flex flex-col gap-3 rounded bg-black-primary p-4 md:flex-row md:items-center md:justify-between">
-        <div className={cn("text-2xl font-bold", net >= 0 ? "text-profit" : "text-loss")}>Net PnL (1 lot): {formatInr(net)}</div>
-        <div className="text-lg font-semibold text-gold-light">Accuracy: {accuracy}%</div>
+        <div className={cn("text-xl font-bold sm:text-2xl", net >= 0 ? "text-profit" : "text-loss")}>Net PnL (1 lot): {formatInr(net)}</div>
+        <div className="text-base font-semibold text-gold-light sm:text-lg">Accuracy: {accuracy}%</div>
       </div>
     </div>
   );
 }
-

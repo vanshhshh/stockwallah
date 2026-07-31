@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 export function SectorChart() {
   const max = Math.max(...sectors.map((sector) => Math.abs(sector.change)));
   return (
-    <div className="card p-6">
+    <div className="card p-4 sm:p-6">
       <h2 className="text-lg font-semibold text-white-primary">Sector Performance</h2>
       <div className="mt-6 grid gap-4">
         {sectors.map((sector) => {
@@ -27,4 +27,3 @@ export function SectorChart() {
     </div>
   );
 }
-

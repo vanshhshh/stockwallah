@@ -13,7 +13,7 @@ export function HistoricalCalendar({ selectedDate, onDateChange }: { selectedDat
 
   return (
     <div className="grid gap-5 lg:grid-cols-[320px_1fr]">
-      <div className="card p-5">
+      <div className="card p-4 sm:p-5">
         <h2 className="text-lg font-semibold text-white-primary">Historical Archive</h2>
         <label className="mt-5 block text-sm text-white-secondary">
           Calendar Picker
@@ -24,22 +24,22 @@ export function HistoricalCalendar({ selectedDate, onDateChange }: { selectedDat
             onChange={(event) => onDateChange(event.target.value)}
           />
         </label>
-        <div className="mt-5 grid grid-cols-3 gap-3 text-center text-sm">
-          <div className="rounded bg-black-primary p-3">
-            <div className="text-xl font-bold text-profit">{data?.stats.winRate || 0}%</div>
+        <div className="mt-5 grid grid-cols-3 gap-2 text-center text-xs sm:gap-3 sm:text-sm">
+          <div className="rounded bg-black-primary p-2 sm:p-3">
+            <div className="text-lg font-bold text-profit sm:text-xl">{data?.stats.winRate || 0}%</div>
             <div className="text-white-muted">Win rate</div>
           </div>
-          <div className="rounded bg-black-primary p-3">
-            <div className="text-xl font-bold text-gold-light">{data?.stats.averageRR || 0}</div>
+          <div className="rounded bg-black-primary p-2 sm:p-3">
+            <div className="text-lg font-bold text-gold-light sm:text-xl">{data?.stats.averageRR || 0}</div>
             <div className="text-white-muted">Avg R:R</div>
           </div>
-          <div className="rounded bg-black-primary p-3">
-            <div className="text-xl font-bold text-white-primary">{data?.stats.totalMonthsTracked || 0}</div>
+          <div className="rounded bg-black-primary p-2 sm:p-3">
+            <div className="text-lg font-bold text-white-primary sm:text-xl">{data?.stats.totalMonthsTracked || 0}</div>
             <div className="text-white-muted">Months</div>
           </div>
         </div>
       </div>
-      <div className="card p-5">
+      <div className="card p-4 sm:p-5">
         <h2 className="text-lg font-semibold text-white-primary">Accuracy Trend</h2>
         <div className="mt-5 h-64">
           <ResponsiveContainer width="100%" height="100%">
@@ -55,4 +55,3 @@ export function HistoricalCalendar({ selectedDate, onDateChange }: { selectedDat
     </div>
   );
 }
-

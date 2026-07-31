@@ -15,7 +15,7 @@ export function SocialProof() {
   return (
     <section className="border-y border-black-border bg-black-surface/45 py-16">
       <div className="mx-auto max-w-7xl px-4">
-        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {items.map(({ icon: Icon, title, text }) => (
             <div key={title} className="card p-6 transition hover:border-gold-primary/50 hover:shadow-gold">
               <Icon className="text-gold-primary" size={28} />
@@ -28,4 +28,3 @@ export function SocialProof() {
     </section>
   );
 }
-

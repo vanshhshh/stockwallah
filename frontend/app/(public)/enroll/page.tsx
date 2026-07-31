@@ -55,11 +55,11 @@ function EnrollPageContent() {
 
   if (success) {
     return (
-      <section className="mx-auto flex max-w-3xl flex-col items-center px-4 py-20 text-center">
+      <section className="mx-auto flex max-w-3xl flex-col items-center px-4 py-12 text-center sm:py-20">
         <CheckCircle2 className="text-profit" size={72} />
-        <h1 className="mt-6 font-display text-5xl font-bold text-white-primary">Enrollment Request Received</h1>
-        <p className="mt-4 max-w-2xl text-lg text-white-secondary">A StockWallah advisor will confirm your batch, schedule, and payment details shortly. Please send the payment screenshot, student name, and selected course on WhatsApp.</p>
-        <GoldButton href={whatsappHref} className="mt-8">
+        <h1 className="mt-6 font-display text-3xl font-bold leading-tight text-white-primary sm:text-5xl">Enrollment Request Received</h1>
+        <p className="mt-4 max-w-2xl text-sm leading-6 text-white-secondary sm:text-lg">A StockWallah advisor will confirm your batch, schedule, and payment details shortly. Please send the payment screenshot, student name, and selected course on WhatsApp.</p>
+        <GoldButton href={whatsappHref} className="mt-8 w-full sm:w-auto">
           <MessageCircle size={18} /> Share Payment Screenshot
         </GoldButton>
       </section>
@@ -71,12 +71,12 @@ function EnrollPageContent() {
   // and the WhatsApp handoff button only.
   if (preselected) {
     return (
-      <section className="mx-auto flex max-w-3xl flex-col items-center px-4 py-20 text-center">
+      <section className="mx-auto flex max-w-3xl flex-col items-center px-4 py-12 text-center sm:py-20">
         <div className="inline-flex rounded-full border border-gold-primary/35 bg-gold-muted px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-gold-light shadow-[0_0_0_1px_rgba(201,168,76,0.08)]">
           Pay via UPI QR
         </div>
-        <h1 className="mt-6 font-display text-4xl font-bold text-white-primary md:text-5xl">Complete payment to enroll</h1>
-        <p className="mt-4 max-w-2xl text-base leading-7 text-white-secondary md:text-lg">Scan the QR below, pay the course fee, then share the payment screenshot on WhatsApp to confirm your enrollment.</p>
+        <h1 className="mt-6 font-display text-3xl font-bold leading-tight text-white-primary sm:text-4xl md:text-5xl">Complete payment to enroll</h1>
+        <p className="mt-4 max-w-2xl text-sm leading-6 text-white-secondary sm:text-base sm:leading-7 md:text-lg">Scan the QR below, pay the course fee, then share the payment screenshot on WhatsApp to confirm your enrollment.</p>
 
         <div className="mx-auto mt-8 w-full max-w-3xl space-y-5">
           <div className="card mx-auto max-w-2xl border border-black-border/80 bg-black-surface/95 p-4 text-left shadow-deep">
@@ -86,16 +86,16 @@ function EnrollPageContent() {
             {selectedCourse.originalPrice ? <div className="text-sm text-white-muted line-through">{formatInr(selectedCourse.originalPrice)}</div> : null}
           </div>
 
-          <div className="mx-auto rounded-3xl bg-white p-4 shadow-[0_20px_50px_rgba(0,0,0,0.28)]">
+          <div className="mx-auto w-full max-w-[360px] rounded-3xl bg-white p-3 shadow-[0_20px_50px_rgba(0,0,0,0.28)] sm:p-4">
             {contactInfo.upiQrImage ? (
-              <img src={contactInfo.upiQrImage} alt="UPI QR" width={360} height={360} className="rounded-2xl object-contain" />
+              <img src={contactInfo.upiQrImage} alt="UPI QR" width={360} height={360} className="h-auto w-full rounded-2xl object-contain" />
             ) : (
-              <QRCode value={contactInfo.upiPayUri} size={360} bgColor="#FFFFFF" fgColor="#000000" />
+              <QRCode value={contactInfo.upiPayUri} className="h-auto w-full" bgColor="#FFFFFF" fgColor="#000000" />
             )}
           </div>
 
           <div className="text-center">
-            <GoldButton href={whatsappHref} className="inline-flex min-w-64 justify-center">
+            <GoldButton href={whatsappHref} className="w-full justify-center sm:w-auto">
               <MessageCircle size={18} /> Share Payment Screenshot on WhatsApp
             </GoldButton>
           </div>
@@ -105,14 +105,14 @@ function EnrollPageContent() {
   }
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-12">
-      <div className="grid gap-8 lg:grid-cols-[1fr_420px] lg:items-start">
+    <section className="mx-auto max-w-7xl px-4 py-10 sm:py-12">
+      <div className="grid gap-8 xl:grid-cols-[1fr_420px] xl:items-start">
         <div className="space-y-5">
           <div className="inline-flex rounded-full border border-gold-primary/35 bg-gold-muted px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-gold-light shadow-[0_0_0_1px_rgba(201,168,76,0.08)]">
             Pay via UPI QR
           </div>
-          <h1 className="font-display text-5xl font-bold text-white-primary md:text-6xl">Enroll at StockWallah</h1>
-          <p className="max-w-2xl text-lg leading-8 text-white-secondary">Scan the QR code, pay the selected course fee, and then send the screenshot on WhatsApp with your student name and desired course.</p>
+          <h1 className="font-display text-3xl font-bold leading-tight text-white-primary sm:text-5xl lg:text-6xl">Enroll at StockWallah</h1>
+          <p className="max-w-2xl text-sm leading-6 text-white-secondary sm:text-lg sm:leading-8">Scan the QR code, pay the selected course fee, and then send the screenshot on WhatsApp with your student name and desired course.</p>
           <div className="grid gap-3 sm:grid-cols-3">
             {[
               { icon: QrCode, title: "Scan QR", text: "Use any UPI app to scan and pay." },
@@ -128,16 +128,16 @@ function EnrollPageContent() {
           </div>
           <p className="rounded-2xl border border-gold-primary/20 bg-gold-muted/20 p-4 text-sm leading-6 text-white-secondary">{academyDisclaimer}</p>
         </div>
-        <div className="card border border-gold-primary/30 bg-black-surface p-6 shadow-deep">
-          <div className="rounded-3xl border border-black-border bg-white p-6 text-center text-black-primary shadow-[0_0_50px_rgba(201,168,76,0.18)]">
-            <div className="text-sm font-semibold uppercase tracking-[0.2em] text-neutral-500">StockWallah Trading Academy</div>
-            <div className="mt-2 text-2xl font-bold leading-tight">UPI ID: {contactInfo.upiId}</div>
+        <div className="card border border-gold-primary/30 bg-black-surface p-4 shadow-deep sm:p-6">
+          <div className="rounded-3xl border border-black-border bg-white p-4 text-center text-black-primary shadow-[0_0_50px_rgba(201,168,76,0.18)] sm:p-6">
+            <div className="text-xs font-semibold uppercase tracking-[0.16em] text-neutral-500 sm:text-sm sm:tracking-[0.2em]">StockWallah Trading Academy</div>
+            <div className="mt-2 break-words text-xl font-bold leading-tight sm:text-2xl">UPI ID: {contactInfo.upiId}</div>
             <p className="mt-3 text-sm text-neutral-600">Scan this QR code with any UPI app to transfer the course fee.</p>
-            <div className="mx-auto mt-5 inline-flex rounded-2xl bg-white p-4 shadow-[0_10px_24px_rgba(0,0,0,0.08)]">
+            <div className="mx-auto mt-5 inline-flex w-full max-w-56 rounded-2xl bg-white p-3 shadow-[0_10px_24px_rgba(0,0,0,0.08)] sm:p-4">
               {contactInfo.upiQrImage ? (
-                <img src={contactInfo.upiQrImage} alt="UPI QR" width={224} height={224} className="object-contain" />
+                <img src={contactInfo.upiQrImage} alt="UPI QR" width={224} height={224} className="h-auto w-full object-contain" />
               ) : (
-                <QRCode value={contactInfo.upiPayUri} size={224} bgColor="#FFFFFF" fgColor="#000000" />
+                <QRCode value={contactInfo.upiPayUri} className="h-auto w-full" bgColor="#FFFFFF" fgColor="#000000" />
               )}
             </div>
             <div className="mt-5 grid gap-2 text-sm text-neutral-700">
@@ -158,7 +158,7 @@ function EnrollPageContent() {
         ))}
       </div>
       <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_360px]">
-        <form onSubmit={submit} className="card p-6">
+        <form onSubmit={submit} className="card p-4 sm:p-6">
           {step === 1 && !preselected ? (
             <div className="grid gap-5">
               <label className="text-sm text-white-secondary">
@@ -221,7 +221,7 @@ function EnrollPageContent() {
             </div>
           ) : null}
           {error ? <p className="mt-4 text-sm text-loss">{error}</p> : null}
-          <div className="mt-6 flex justify-between gap-3">
+          <div className="mt-6 flex flex-col justify-between gap-3 sm:flex-row">
             {!(
               preselected && step === 2
             ) ? (

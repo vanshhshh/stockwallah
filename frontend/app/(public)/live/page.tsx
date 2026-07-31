@@ -8,16 +8,16 @@ import { socialLinks } from "@/lib/content";
 export default function LivePage() {
   const { data } = useYoutubeStatus();
   return (
-    <section className="mx-auto max-w-7xl px-4 py-12">
+    <section className="mx-auto max-w-7xl px-4 py-10 sm:py-12">
       <div className="mb-8 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <div className="mb-3 inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.18em] text-gold-primary">
+          <div className="mb-3 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-gold-primary sm:text-sm sm:tracking-[0.18em]">
             {data?.isLive ? <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-loss" /> : <Youtube size={16} />} {data?.isLive ? "Live Now" : "StockWallah Live"}
           </div>
-          <h1 className="font-display text-5xl font-bold text-white-primary">{data?.title || "Live Market Classroom"}</h1>
-          <p className="mt-4 max-w-3xl text-lg leading-8 text-white-secondary">Pre-market planning, trading psychology, NISM prep, and live Q&A sessions from the StockWallah mentor desk.</p>
+          <h1 className="font-display text-3xl font-bold leading-tight text-white-primary sm:text-5xl">{data?.title || "Live Market Classroom"}</h1>
+          <p className="mt-4 max-w-3xl text-sm leading-6 text-white-secondary sm:text-lg sm:leading-8">Pre-market planning, trading psychology, NISM prep, and live Q&A sessions from the StockWallah mentor desk.</p>
         </div>
-        <GoldButton href={socialLinks.youtube} variant="outline">
+        <GoldButton href={socialLinks.youtube} variant="outline" className="w-full sm:w-auto">
           <Bell size={18} /> Subscribe
         </GoldButton>
       </div>
@@ -39,10 +39,10 @@ export default function LivePage() {
           rel="noreferrer"
           className="flex aspect-video w-full items-center justify-center rounded-sw border border-black-border bg-[linear-gradient(135deg,rgba(201,168,76,0.18),rgba(10,10,10,0.78)),repeating-linear-gradient(90deg,rgba(201,168,76,0.14)_0_1px,transparent_1px_34px)] shadow-deep transition hover:border-gold-primary/50 hover:shadow-gold"
         >
-          <div className="text-center">
-            <Youtube className="mx-auto text-gold-light" size={78} />
-            <p className="mt-5 text-xl font-semibold text-white-primary">Open StockWallah on YouTube</p>
-            <p className="mt-2 text-white-secondary">Open the official StockWallah Trading Academy channel for live classes and uploads.</p>
+          <div className="px-4 text-center">
+            <Youtube className="mx-auto text-gold-light" size={56} />
+            <p className="mt-5 text-lg font-semibold text-white-primary sm:text-xl">Open StockWallah on YouTube</p>
+            <p className="mt-2 text-sm text-white-secondary sm:text-base">Open the official StockWallah Trading Academy channel for live classes and uploads.</p>
           </div>
         </a>
       )}

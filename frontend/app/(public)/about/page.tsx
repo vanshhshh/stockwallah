@@ -44,12 +44,12 @@ export default function AboutPage() {
   return (
     <section>
       <div className="border-b border-black-border bg-black-surface/35">
-        <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 lg:grid-cols-[0.95fr_1.05fr] lg:items-end">
+        <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:py-14 lg:grid-cols-[0.95fr_1.05fr] lg:items-end lg:py-16">
           <div>
-            <h1 className="font-display text-5xl font-bold leading-tight text-white-primary md:text-6xl">
+            <h1 className="font-display text-3xl font-bold leading-tight text-white-primary sm:text-5xl lg:text-6xl">
               About StockWallah
             </h1>
-            <p className="mt-5 max-w-2xl text-lg leading-8 text-white-secondary">
+            <p className="mt-4 max-w-2xl text-sm leading-6 text-white-secondary sm:mt-5 sm:text-lg sm:leading-8">
               StockWallah is a practical stock market academy built for learners who want clear concepts, disciplined execution, and mentor-led guidance.
             </p>
             <p className="mt-4 max-w-2xl text-base leading-7 text-white-secondary">
@@ -67,15 +67,15 @@ export default function AboutPage() {
         </div>
       </div>
 
-      <div className="mx-auto max-w-7xl px-4 py-16">
+      <div className="mx-auto max-w-7xl px-4 py-10 sm:py-14 lg:py-16">
         <div className="mb-9 max-w-2xl">
-          <h2 className="font-display text-4xl font-bold text-white-primary">Meet the Teachers</h2>
+          <h2 className="font-display text-3xl font-bold text-white-primary sm:text-4xl">Meet the Teachers</h2>
           <p className="mt-3 text-base leading-7 text-white-secondary">
             A focused mentor desk for market structure, price action, risk management, and classroom support.
           </p>
         </div>
 
-        <div className="grid gap-5 lg:grid-cols-3">
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {teachers.map((teacher) => (
             <article key={teacher.name} className="card overflow-hidden">
               <div className="relative aspect-[4/5] bg-black-primary">
@@ -110,7 +110,7 @@ export default function AboutPage() {
             {academyDisclaimer}
           </div>
           <div className="card p-5">
-            <h2 className="flex items-center gap-2 text-xl font-semibold text-white-primary">
+            <h2 className="flex min-w-0 items-start gap-2 text-base font-semibold leading-6 text-white-primary sm:text-xl">
               <MapPin className="text-gold-primary" /> {contactInfo.addressShort}
             </h2>
             <iframe

@@ -18,19 +18,19 @@ export default function LevelsPage() {
   const levels = data?.levels || [];
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-12">
+    <section className="mx-auto max-w-7xl px-4 py-10 sm:py-12">
       <div className="mb-6 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-        <div>
-          <h1 className="font-display text-5xl font-bold text-white-primary">Today&apos;s Levels — {symbol === "NIFTY" ? "NIFTY 50" : "BANKNIFTY"}</h1>
-          <p className="mt-3 text-white-secondary">Marked at 8:30 AM IST with live PnL simulation and historical accuracy tracking.</p>
+        <div className="min-w-0">
+          <h1 className="font-display text-3xl font-bold leading-tight text-white-primary sm:text-5xl">Today&apos;s Levels - {symbol === "NIFTY" ? "NIFTY 50" : "BANKNIFTY"}</h1>
+          <p className="mt-3 text-sm leading-6 text-white-secondary sm:text-base">Marked at 8:30 AM IST with live PnL simulation and historical accuracy tracking.</p>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
           {symbols.map((item) => (
             <button
               key={item}
               onClick={() => setSymbol(item)}
               className={cn(
-                "premium-focus min-h-11 rounded border px-4 text-sm font-semibold transition",
+                "premium-focus min-h-11 rounded border px-3 text-sm font-semibold transition sm:px-4",
                 symbol === item ? "border-gold-primary bg-gold-muted text-gold-light" : "border-black-border bg-black-surface text-white-secondary hover:border-gold-primary/60"
               )}
             >
@@ -38,7 +38,7 @@ export default function LevelsPage() {
             </button>
           ))}
           <button
-            className="premium-focus inline-flex min-h-11 items-center gap-2 rounded border border-black-border bg-black-surface px-4 text-sm text-white-secondary hover:border-gold-primary/60"
+            className="premium-focus col-span-2 inline-flex min-h-11 items-center justify-center gap-2 rounded border border-black-border bg-black-surface px-4 text-sm text-white-secondary hover:border-gold-primary/60 sm:col-span-1"
             onClick={() => refetch()}
           >
             <RefreshCw size={16} className={isFetching ? "animate-spin" : ""} /> Refresh
@@ -47,7 +47,7 @@ export default function LevelsPage() {
       </div>
 
       {isLoading ? (
-        <div className="card h-[580px] animate-pulse bg-black-elevated" />
+        <div className="card h-[420px] animate-pulse bg-black-elevated sm:h-[580px]" />
       ) : isError ? (
         <div className="card p-6 text-white-secondary">Levels are unavailable right now. Please try again shortly.</div>
       ) : (
@@ -65,4 +65,3 @@ export default function LevelsPage() {
     </section>
   );
 }
-
