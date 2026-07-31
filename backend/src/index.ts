@@ -15,6 +15,7 @@ import levelsRouter from "./routes/levels.js";
 import youtubeRouter from "./routes/youtube.js";
 import settingsRouter from "./routes/settings.js";
 import galleryRouter from "./routes/gallery.js";
+import coursesRouter from "./routes/courses.js";
 import adminAuthRouter from "./routes/admin/auth.js";
 import adminDashboardRouter from "./routes/admin/dashboard.js";
 import adminLeadsRouter from "./routes/admin/leads.js";
@@ -61,6 +62,7 @@ app.use("/api/levels", levelsRouter);
 app.use("/api/youtube", youtubeRouter);
 app.use("/api/settings", settingsRouter);
 app.use("/api/gallery", galleryRouter);
+app.use("/api/courses", coursesRouter);
 
 app.use("/api/admin/auth", adminAuthRouter);
 app.use("/api/admin/dashboard", requireAdmin, adminDashboardRouter);

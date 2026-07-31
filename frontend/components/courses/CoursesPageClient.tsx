@@ -3,14 +3,15 @@
 import { useMemo, useState } from "react";
 import { CourseCard } from "./CourseCard";
 import { CourseFilters } from "./CourseFilters";
-import { courses } from "@/lib/content";
+import { useCourses } from "@/hooks/useCourses";
 
 export function CoursesPageClient() {
   const [filter, setFilter] = useState("All");
+  const { data: courses = [] } = useCourses();
   const filtered = useMemo(() => {
     if (filter === "All") return courses;
     return courses.filter((course) => course.level === filter || course.category === filter || course.mode.toLowerCase().includes(filter.toLowerCase()));
-  }, [filter]);
+  }, [courses, filter]);
 
   return (
     <>
@@ -26,4 +27,3 @@ export function CoursesPageClient() {
     </>
   );
 }
-

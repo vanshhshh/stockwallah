@@ -74,7 +74,7 @@ function FloatingLink({ href, label, className, side }: { href?: string; label: 
       aria-label={label}
     >
       <SocialIcon label={label} />
-      <span className={`pointer-events-none absolute bottom-1/2 w-max translate-y-1/2 rounded bg-black-elevated px-3 py-2 text-xs text-white-primary opacity-0 shadow-deep transition group-hover:opacity-100 ${side === "left" ? "left-16" : "right-16"}`}>
+      <span className={`pointer-events-none absolute bottom-1/2 hidden w-max translate-y-1/2 rounded bg-black-elevated px-3 py-2 text-xs text-white-primary opacity-0 shadow-deep transition group-hover:opacity-100 lg:block ${side === "left" ? "left-16" : "right-16"}`}>
         {label}
       </span>
     </a>

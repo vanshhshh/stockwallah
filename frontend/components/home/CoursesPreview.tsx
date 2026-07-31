@@ -1,10 +1,13 @@
+"use client";
+
 import { ArrowRight } from "lucide-react";
 import { CourseCard } from "@/components/courses/CourseCard";
 import { SectionHeading } from "@/components/common/SectionHeading";
-import { courses } from "@/lib/content";
 import { GoldButton } from "@/components/common/GoldButton";
+import { useCourses } from "@/hooks/useCourses";
 
 export function CoursesPreview() {
+  const { data: courses = [] } = useCourses();
   const previewCourses = ["secret-strategy", "smc", "all-in-one-online"]
     .map((slug) => courses.find((course) => course.slug === slug))
     .filter((course): course is (typeof courses)[number] => Boolean(course));
