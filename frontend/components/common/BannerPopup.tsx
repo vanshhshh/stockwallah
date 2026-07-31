@@ -29,11 +29,11 @@ export function BannerPopup() {
 
   if (!open || !banner) return null;
 
-  const image = <img src={toSrc(banner.imageUrl)} alt={banner.title} className="max-h-[76vh] w-full rounded object-contain" />;
+  const image = <img src={toSrc(banner.imageUrl)} alt={banner.title} className="max-h-[72dvh] w-full rounded object-contain sm:max-h-[76vh]" />;
 
   return (
-    <div className="fixed inset-0 z-[95] flex items-center justify-center bg-black-primary/80 px-4 backdrop-blur">
-      <div className="relative w-full max-w-3xl rounded-sw border border-gold-primary/30 bg-black-surface p-3 shadow-deep">
+    <div className="fixed inset-0 z-[95] flex items-center justify-center overflow-y-auto bg-black-primary/80 px-3 py-4 backdrop-blur sm:px-4">
+      <div className="relative my-auto w-full max-w-3xl rounded-sw border border-gold-primary/30 bg-black-surface p-2 shadow-deep sm:p-3">
         <button
           type="button"
           aria-label="Close banner"

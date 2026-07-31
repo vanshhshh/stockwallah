@@ -45,34 +45,34 @@ export function LeadCapturePopup() {
   }
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black-primary/90 px-0 backdrop-blur-md md:px-6">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-black-primary/90 px-3 py-3 backdrop-blur-md sm:px-4 md:px-6">
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 24 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
-        className="noise-overlay flex h-full w-full flex-col justify-center border-gold-primary/40 bg-black-surface p-6 shadow-[0_0_60px_rgba(201,168,76,0.2)] md:h-auto md:max-w-lg md:rounded-modal md:border md:p-8"
+        className="noise-overlay my-auto flex max-h-[calc(100dvh-1.5rem)] w-full max-w-lg flex-col overflow-y-auto rounded-modal border border-gold-primary/40 bg-black-surface p-4 shadow-[0_0_60px_rgba(201,168,76,0.2)] sm:p-6 md:p-8"
         role="dialog"
         aria-modal="true"
         aria-labelledby="lead-title"
       >
-        <div className="mb-8 flex items-center justify-between">
+        <div className="mb-5 flex items-center justify-between sm:mb-8">
           <LogoMark />
           <button
             aria-label="Skip lead capture"
-            className="premium-focus rounded p-2 text-white-muted transition hover:bg-black-elevated hover:text-white-primary md:hidden"
+            className="premium-focus inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-black-border bg-black-primary text-white-muted transition hover:bg-black-elevated hover:text-white-primary"
             onClick={markCaptured}
             type="button"
           >
             <X size={20} />
           </button>
         </div>
-        <h2 id="lead-title" className="font-display text-4xl font-bold leading-tight text-white-primary">
+        <h2 id="lead-title" className="font-display text-3xl font-bold leading-tight text-white-primary sm:text-4xl">
           Get Free Access to Our <span className="gold-gradient-text">Daily Market Levels</span>
         </h2>
-        <p className="mt-4 text-base leading-7 text-white-secondary">
+        <p className="mt-3 text-sm leading-6 text-white-secondary sm:mt-4 sm:text-base sm:leading-7">
           {academyMission}
         </p>
-        <form className="mt-8 space-y-4" onSubmit={submit}>
+        <form className="mt-5 space-y-3 sm:mt-8 sm:space-y-4" onSubmit={submit}>
           <input
             className="premium-focus min-h-12 w-full rounded border border-black-border bg-black-primary px-4 text-white-primary placeholder:text-white-muted"
             placeholder="Full Name"
@@ -105,10 +105,10 @@ export function LeadCapturePopup() {
             {loading ? "Saving..." : "Get Free Access"}
           </button>
         </form>
-        <p className="mt-4 flex items-center justify-center gap-2 text-sm text-white-secondary">
+        <p className="mt-4 flex items-center justify-center gap-2 text-center text-xs text-white-secondary sm:text-sm">
           <Lock size={14} className="text-gold-primary" /> No spam. Unsubscribe anytime.
         </p>
-        <button type="button" onClick={markCaptured} className="premium-focus mx-auto mt-5 block text-sm text-white-muted hover:text-gold-light">
+        <button type="button" onClick={markCaptured} className="premium-focus mx-auto mt-4 block min-h-10 px-4 text-sm text-white-muted hover:text-gold-light sm:mt-5">
           Skip for now
         </button>
       </motion.div>
