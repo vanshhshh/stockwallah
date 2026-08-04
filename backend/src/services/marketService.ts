@@ -4,6 +4,7 @@ import { logger } from "../lib/logger.js";
 import type { IndexQuote, MarketMover } from "../types/index.js";
 
 const nseUrl = "https://www.nseindia.com/api/equity-stockIndices?index=SECURITIES%20IN%20F%26O";
+const nseMoversUrl = "https://www.nseindia.com/api/live-analysis-variations";
 const nseHome = "https://www.nseindia.com/";
 const yahooFinance = new YahooFinance();
 
@@ -53,7 +54,7 @@ function headers(cookie?: string) {
   };
 }
 
-async function fetchNseJson() {
+async function fetchNseJson(url = nseUrl) {
   let cookie = process.env.NSE_SESSION_COOKIE;
   if (!cookie) {
     const warmup = await fetch(nseHome, { headers: headers() });
@@ -61,7 +62,7 @@ async function fetchNseJson() {
   }
 
   for (let attempt = 1; attempt <= 3; attempt += 1) {
-    const response = await fetch(nseUrl, { headers: headers(cookie) });
+    const response = await fetch(url, { headers: headers(cookie) });
     if (response.ok) {
       return response.json() as Promise<{ data: Array<Record<string, unknown>> }>;
     }
@@ -79,6 +80,25 @@ function normalizeNseRow(row: Record<string, unknown>): MarketMover {
     change: Number(row.change || 0),
     pChange: Number(row.pChange || 0),
   };
+}
+
+function normalizeNseMover(row: Record<string, unknown>): MarketMover {
+  const previousPrice = Number(row.prev_price || 0);
+  const lastPrice = Number(row.ltp || row.lastPrice || 0);
+  const pChange = Number(row.perChange ?? row.net_price ?? row.pChange ?? 0);
+  return {
+    symbol: String(row.symbol || ""),
+    companyName: String(row.symbol || ""),
+    lastPrice,
+    change: previousPrice ? lastPrice - previousPrice : Number(row.change || 0),
+    pChange,
+  };
+}
+
+async function fetchNseMovers(type: "gainers" | "loosers") {
+  const payload = (await fetchNseJson(`${nseMoversUrl}?index=${type}`)) as Record<string, { data?: Array<Record<string, unknown>> }>;
+  const rows = payload.FOSec?.data || payload.NIFTY?.data || payload.allSec?.data || [];
+  return rows.map(normalizeNseMover).filter((row) => row.symbol && row.lastPrice && Number.isFinite(row.pChange));
 }
 
 async function yahooFallbackMovers() {
@@ -99,25 +119,42 @@ async function yahooFallbackMovers() {
 }
 
 export async function getGainersLosers() {
-  const cached = await cacheGet<{ gainers: MarketMover[]; losers: MarketMover[]; timestamp: string }>("market:gainers-losers");
+  const cached = await cacheGet<{ gainers: MarketMover[]; losers: MarketMover[]; timestamp: string; source?: string }>("market:gainers-losers");
   if (cached) return cached;
+
+  try {
+    const [gainers, losers] = await Promise.all([fetchNseMovers("gainers"), fetchNseMovers("loosers")]);
+    if (gainers.length && losers.length) {
+      const result = {
+        gainers: gainers.sort((a, b) => b.pChange - a.pChange).slice(0, 10),
+        losers: losers.sort((a, b) => a.pChange - b.pChange).slice(0, 10),
+        timestamp: new Date().toISOString(),
+        source: "NSE live-analysis-variations",
+      };
+      await cacheSet("market:gainers-losers", result, 60);
+      return result;
+    }
+    throw new Error("NSE mover endpoint returned incomplete data");
+  } catch (error) {
+    logger.warn("NSE live movers failed; deriving movers from NSE F&O table", { error: error instanceof Error ? error.message : error });
+  }
 
   let movers: MarketMover[] = [];
   try {
     const payload = await fetchNseJson();
     movers = (payload.data || []).map(normalizeNseRow).filter((row) => row.symbol && row.lastPrice);
   } catch (error) {
-    logger.warn("NSE movers failed; using Yahoo fallback", { error: error instanceof Error ? error.message : error });
+    logger.warn("NSE F&O movers failed; using Yahoo fallback", { error: error instanceof Error ? error.message : error });
     movers = await yahooFallbackMovers();
   }
-
   const result = {
     gainers: [...movers].sort((a, b) => b.pChange - a.pChange).slice(0, 10),
     losers: [...movers].sort((a, b) => a.pChange - b.pChange).slice(0, 10),
     timestamp: new Date().toISOString(),
+    source: movers === fallbackMovers ? "Emergency fallback" : "Derived market quotes",
   };
 
-  await cacheSet("market:gainers-losers", result, 5 * 60);
+  await cacheSet("market:gainers-losers", result, 60);
   return result;
 }
 

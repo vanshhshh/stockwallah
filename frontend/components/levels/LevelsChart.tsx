@@ -13,20 +13,26 @@ const colors: Record<TradingLevel["levelType"], { color: string; style: LineStyl
 };
 
 function generateOhlc(symbol: string) {
-  const base = symbol === "BANKNIFTY" ? 52200 : 24200;
+  const baseBySymbol: Record<string, number> = {
+    NIFTY: 24200,
+    NIFTYFUT: 24260,
+    BANKNIFTY: 52200
+  };
+  const base = baseBySymbol[symbol] || baseBySymbol.NIFTY;
+  const isBankNifty = symbol === "BANKNIFTY";
   const today = new Date();
   today.setHours(9, 15, 0, 0);
   return Array.from({ length: 76 }).map((_, index) => {
     const time = new Date(today.getTime() + index * 5 * 60 * 1000);
-    const wave = Math.sin(index / 5) * (symbol === "BANKNIFTY" ? 95 : 35);
-    const trend = index * (symbol === "BANKNIFTY" ? 3.8 : 1.3);
+    const wave = Math.sin(index / 5) * (isBankNifty ? 95 : 35);
+    const trend = index * (isBankNifty ? 3.8 : 1.3);
     const open = base + wave + trend + Math.cos(index) * 12;
-    const close = open + Math.sin(index * 1.7) * (symbol === "BANKNIFTY" ? 34 : 12);
+    const close = open + Math.sin(index * 1.7) * (isBankNifty ? 34 : 12);
     return {
       time: Math.floor(time.getTime() / 1000) as UTCTimestamp,
       open,
-      high: Math.max(open, close) + (symbol === "BANKNIFTY" ? 48 : 18),
-      low: Math.min(open, close) - (symbol === "BANKNIFTY" ? 42 : 15),
+      high: Math.max(open, close) + (isBankNifty ? 48 : 18),
+      low: Math.min(open, close) - (isBankNifty ? 42 : 15),
       close
     };
   });
@@ -105,4 +111,3 @@ export function LevelsChart({ levels, symbol }: { levels: TradingLevel[]; symbol
     </div>
   );
 }
-

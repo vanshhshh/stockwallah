@@ -2,7 +2,7 @@ import { Clock, Target } from "lucide-react";
 import type { TradingLevel } from "@/hooks/useLevels";
 import { cn, formatInr, formatNumber } from "@/lib/utils";
 
-const lotSize: Record<string, number> = { NIFTY: 50, BANKNIFTY: 15 };
+const lotSize: Record<string, number> = { NIFTY: 75, NIFTYFUT: 75, BANKNIFTY: 35 };
 
 export function calculateLevelPnl(level: TradingLevel, symbol: string) {
   const lot = lotSize[symbol] || 1;

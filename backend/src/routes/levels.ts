@@ -20,7 +20,12 @@ function serializeLevel(level: Awaited<ReturnType<typeof prisma.tradingLevel.fin
 }
 
 function fallbackLevels(date: Date, symbol: string) {
-  const base = symbol === "BANKNIFTY" ? 52340 : 24280;
+  const baseBySymbol: Record<string, number> = {
+    NIFTY: 24280,
+    NIFTYFUT: 24340,
+    BANKNIFTY: 52340,
+  };
+  const base = baseBySymbol[symbol] || baseBySymbol.NIFTY;
   return [
     { price: base + 240, type: "Strong Resistance", target: base + 40, sl: base + 330, hitType: "target", notes: "Previous day high rejection zone" },
     { price: base + 110, type: "Resistance", target: base - 20, sl: base + 185, hitType: null, notes: "Gap fill area" },

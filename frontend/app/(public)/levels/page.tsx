@@ -9,7 +9,11 @@ import { LevelsChart } from "@/components/levels/LevelsChart";
 import { useLevels } from "@/hooks/useLevels";
 import { cn, todayIso } from "@/lib/utils";
 
-const symbols = ["NIFTY", "BANKNIFTY"];
+const symbols = [
+  { value: "NIFTY", label: "NIFTY 50" },
+  { value: "NIFTYFUT", label: "NIFTY Futures" },
+  { value: "BANKNIFTY", label: "BANKNIFTY" }
+];
 
 export default function LevelsPage() {
   const [symbol, setSymbol] = useState("NIFTY");
@@ -21,20 +25,20 @@ export default function LevelsPage() {
     <section className="mx-auto max-w-7xl px-4 py-10 sm:py-12">
       <div className="mb-6 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
         <div className="min-w-0">
-          <h1 className="font-display text-3xl font-bold leading-tight text-white-primary sm:text-5xl">Today&apos;s Levels - {symbol === "NIFTY" ? "NIFTY 50" : "BANKNIFTY"}</h1>
+          <h1 className="font-display text-3xl font-bold leading-tight text-white-primary sm:text-5xl">Today&apos;s Levels - {symbols.find((item) => item.value === symbol)?.label || symbol}</h1>
           <p className="mt-3 text-sm leading-6 text-white-secondary sm:text-base">Marked at 8:30 AM IST with live PnL simulation and historical accuracy tracking.</p>
         </div>
         <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
           {symbols.map((item) => (
             <button
-              key={item}
-              onClick={() => setSymbol(item)}
+              key={item.value}
+              onClick={() => setSymbol(item.value)}
               className={cn(
                 "premium-focus min-h-11 rounded border px-3 text-sm font-semibold transition sm:px-4",
-                symbol === item ? "border-gold-primary bg-gold-muted text-gold-light" : "border-black-border bg-black-surface text-white-secondary hover:border-gold-primary/60"
+                symbol === item.value ? "border-gold-primary bg-gold-muted text-gold-light" : "border-black-border bg-black-surface text-white-secondary hover:border-gold-primary/60"
               )}
             >
-              {item}
+              {item.label}
             </button>
           ))}
           <button

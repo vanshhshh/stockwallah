@@ -46,10 +46,10 @@ export default function MarketPage() {
 
       <div className="mb-6 text-sm text-white-muted">
         As of{" "}
-        {overview.data?.timestamp
-          ? new Date(overview.data.timestamp).toLocaleTimeString("en-IN", { timeZone: "Asia/Kolkata" })
+        {movers.data?.timestamp || overview.data?.timestamp
+          ? new Date(movers.data?.timestamp || overview.data?.timestamp || "").toLocaleTimeString("en-IN", { timeZone: "Asia/Kolkata" })
           : "--"}{" "}
-        IST
+        IST{movers.data?.source ? ` · Movers source: ${movers.data.source}` : ""}
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

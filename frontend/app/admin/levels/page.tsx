@@ -9,6 +9,11 @@ import { todayIso } from "@/lib/utils";
 import type { TradingLevel } from "@/hooks/useLevels";
 
 const levelTypes = ["Support", "Resistance", "Strong Support", "Strong Resistance", "CPR"];
+const symbols = [
+  { value: "NIFTY", label: "NIFTY 50" },
+  { value: "NIFTYFUT", label: "NIFTY Futures" },
+  { value: "BANKNIFTY", label: "BANKNIFTY" }
+];
 
 export default function AdminLevelsPage() {
   const [date, setDate] = useState(todayIso());
@@ -57,8 +62,9 @@ export default function AdminLevelsPage() {
       <div className="mb-6 grid gap-4 lg:grid-cols-[180px_180px_1fr]">
         <input className="premium-focus min-h-11 rounded border border-black-border bg-black-surface px-3 text-white-primary" type="date" value={date} onChange={(event) => setDate(event.target.value)} />
         <select className="premium-focus min-h-11 rounded border border-black-border bg-black-surface px-3 text-white-primary" value={symbol} onChange={(event) => setSymbol(event.target.value)}>
-          <option>NIFTY</option>
-          <option>BANKNIFTY</option>
+          {symbols.map((item) => (
+            <option key={item.value} value={item.value}>{item.label}</option>
+          ))}
         </select>
       </div>
       <div className="card mb-8 p-5">
@@ -129,4 +135,3 @@ export default function AdminLevelsPage() {
     </div>
   );
 }
-

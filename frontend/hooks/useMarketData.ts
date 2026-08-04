@@ -40,10 +40,9 @@ export function useGainersLosers() {
   return useQuery({
     queryKey: ["market", "gainers-losers"],
     queryFn: async () => {
-      const { data } = await api.get<{ gainers: MarketMover[]; losers: MarketMover[]; timestamp: string }>("/api/market/gainers-losers");
+      const { data } = await api.get<{ gainers: MarketMover[]; losers: MarketMover[]; timestamp: string; source?: string }>("/api/market/gainers-losers");
       return data;
     },
-    refetchInterval: 2 * 60_000
+    refetchInterval: 60_000
   });
 }
-

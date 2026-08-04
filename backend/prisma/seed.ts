@@ -301,8 +301,8 @@ async function main() {
     skipDuplicates: true,
   });
 
-  const symbols = ["NIFTY", "BANKNIFTY"];
-  const baseBySymbol: Record<string, number> = { NIFTY: 24200, BANKNIFTY: 52200 };
+  const symbols = ["NIFTY", "NIFTYFUT", "BANKNIFTY"];
+  const baseBySymbol: Record<string, number> = { NIFTY: 24200, NIFTYFUT: 24260, BANKNIFTY: 52200 };
   for (let day = 0; day < 7; day += 1) {
     const date = new Date();
     date.setDate(date.getDate() - day);
