@@ -1,8 +1,23 @@
+import { randomUUID } from "crypto";
+import { mkdir, writeFile } from "fs/promises";
+import path from "path";
 import { Router } from "express";
 import { z } from "zod";
 import { prisma } from "../../lib/prisma.js";
 
 const router = Router();
+const uploadDir = path.resolve(process.cwd(), "uploads");
+
+async function saveBase64Image(imageData: string) {
+  const match = imageData.match(/^data:(image\/(?:png|jpeg|jpg|webp));base64,(.+)$/);
+  if (!match) throw new Error("Invalid image data");
+
+  const ext = match[1].includes("png") ? "png" : match[1].includes("webp") ? "webp" : "jpg";
+  const fileName = `${randomUUID()}.${ext}`;
+  await mkdir(uploadDir, { recursive: true });
+  await writeFile(path.join(uploadDir, fileName), Buffer.from(match[2], "base64"));
+  return `/uploads/${fileName}`;
+}
 
 router.get("/", async (_req, res, next) => {
   try {
@@ -32,6 +47,16 @@ router.put("/", async (req, res, next) => {
       ),
     );
     res.json({ settings: Object.fromEntries(updates.map((setting) => [setting.key, setting.value])) });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/upload-image", async (req, res, next) => {
+  try {
+    const payload = z.object({ imageData: z.string().min(32) }).parse(req.body);
+    const imageUrl = await saveBase64Image(payload.imageData);
+    res.status(201).json({ imageUrl });
   } catch (error) {
     next(error);
   }

@@ -2,8 +2,10 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { ImagePlus } from "lucide-react";
 import { DataTable } from "@/components/admin/DataTable";
 import { api } from "@/lib/api";
+import { mediaSrc, readFileAsDataUrl } from "@/lib/media";
 import { formatInr } from "@/lib/utils";
 
 type AdminCourse = {
@@ -64,11 +66,26 @@ export default function AdminCoursesPage() {
       queryClient.invalidateQueries({ queryKey: ["admin", "courses"] });
     }
   });
+  const uploadImage = useMutation({
+    mutationFn: (imageData: string) => api.post<{ imageUrl: string }>("/api/admin/settings/upload-image", { imageData })
+  });
 
   function addCourse(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!newCourse.title || !newCourse.description || !newCourse.price) return;
     create.mutate();
+  }
+
+  async function uploadNewCourseImage(file: File | undefined) {
+    if (!file) return;
+    const response = await uploadImage.mutateAsync(await readFileAsDataUrl(file));
+    setNewCourse((course) => ({ ...course, thumbnail: response.data.imageUrl }));
+  }
+
+  async function uploadExistingCourseImage(courseId: number, file: File | undefined) {
+    if (!file) return;
+    const response = await uploadImage.mutateAsync(await readFileAsDataUrl(file));
+    await update.mutateAsync({ id: courseId, payload: { thumbnail: response.data.imageUrl } });
   }
 
   return (
@@ -93,6 +110,15 @@ export default function AdminCoursesPage() {
           <input className="premium-focus min-h-11 rounded border border-black-border bg-black-primary px-3 text-white-primary" placeholder="Level" value={newCourse.level} onChange={(event) => setNewCourse({ ...newCourse, level: event.target.value })} />
           <input className="premium-focus min-h-11 rounded border border-black-border bg-black-primary px-3 text-white-primary" placeholder="Image path or URL" value={newCourse.thumbnail} onChange={(event) => setNewCourse({ ...newCourse, thumbnail: event.target.value })} />
         </div>
+        <div className="grid gap-3 sm:grid-cols-[160px_1fr] sm:items-center">
+          <div className="h-28 overflow-hidden rounded border border-black-border bg-black-primary">
+            <img src={mediaSrc(newCourse.thumbnail, "/pankaj-yadav-founder-new.png")} alt="New course preview" className="h-full w-full object-cover object-top" />
+          </div>
+          <label className="premium-focus inline-flex min-h-11 w-fit cursor-pointer items-center justify-center gap-2 rounded border border-gold-primary/45 px-4 text-sm font-semibold text-gold-light hover:bg-gold-muted">
+            <ImagePlus size={16} /> Upload course image
+            <input type="file" accept="image/png,image/jpeg,image/webp" className="sr-only" onChange={(event) => uploadNewCourseImage(event.target.files?.[0])} />
+          </label>
+        </div>
         <textarea className="premium-focus min-h-24 rounded border border-black-border bg-black-primary px-3 py-2 text-white-primary" placeholder="Description" value={newCourse.description} onChange={(event) => setNewCourse({ ...newCourse, description: event.target.value })} />
         <button className="gold-gradient-bg premium-focus min-h-11 rounded px-4 font-semibold text-black-primary disabled:opacity-50 sm:w-fit" disabled={create.isPending || !newCourse.title || !newCourse.description || !newCourse.price}>
           {create.isPending ? "Adding..." : "Add Course"}
@@ -100,10 +126,10 @@ export default function AdminCoursesPage() {
       </form>
 
       <DataTable>
-        <table className="w-full min-w-[1280px] text-sm">
+        <table className="w-full min-w-[1480px] text-sm">
           <thead className="bg-black-primary text-left text-xs uppercase tracking-[0.14em] text-white-muted">
             <tr>
-              {["Course", "Description", "Category", "Mode", "Duration", "Price", "Original", "Enrollments", "Active"].map((head) => (
+              {["Course", "Image", "Description", "Category", "Mode", "Duration", "Price", "Original", "Enrollments", "Active"].map((head) => (
                 <th key={head} className="px-5 py-3">{head}</th>
               ))}
             </tr>
@@ -118,6 +144,23 @@ export default function AdminCoursesPage() {
                     onBlur={(event) => update.mutate({ id: course.id, payload: { title: event.target.value } })}
                     aria-label={`Title for ${course.title}`}
                   />
+                </td>
+                <td className="px-5 py-4 align-top">
+                  <div className="grid w-48 gap-2">
+                    <div className="h-24 overflow-hidden rounded border border-black-border bg-black-primary">
+                      <img src={mediaSrc(course.thumbnail, "/pankaj-yadav-founder-new.png")} alt={`${course.title} thumbnail`} className="h-full w-full object-cover object-top" />
+                    </div>
+                    <input
+                      className="rounded border border-black-border bg-black-primary px-3 py-2 text-white-primary"
+                      defaultValue={course.thumbnail || ""}
+                      onBlur={(event) => update.mutate({ id: course.id, payload: { thumbnail: event.target.value } })}
+                      aria-label={`Image for ${course.title}`}
+                    />
+                    <label className="premium-focus inline-flex min-h-9 cursor-pointer items-center justify-center gap-2 rounded border border-gold-primary/45 px-3 text-xs font-semibold text-gold-light hover:bg-gold-muted">
+                      <ImagePlus size={14} /> Upload
+                      <input type="file" accept="image/png,image/jpeg,image/webp" className="sr-only" onChange={(event) => uploadExistingCourseImage(course.id, event.target.files?.[0])} />
+                    </label>
+                  </div>
                 </td>
                 <td className="px-5 py-4 align-top">
                   <textarea

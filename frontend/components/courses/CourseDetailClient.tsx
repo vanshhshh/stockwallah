@@ -1,16 +1,18 @@
 "use client";
 
-import Image from "next/image";
 import { useState } from "react";
 import { Check, ChevronDown, Clock, FileBadge, PlayCircle, Star, Users } from "lucide-react";
 import { contactInfo, curriculum, type Course } from "@/lib/content";
 import { associateMentorProfile, founderProfile, mentorProfile } from "@/lib/content";
 import { formatInr } from "@/lib/utils";
 import { GoldButton } from "@/components/common/GoldButton";
+import { useCourses } from "@/hooks/useCourses";
 
 const tabs = ["Overview", "Curriculum", "Instructor", "Reviews", "FAQs"];
 
-export function CourseDetailClient({ course }: { course: Course }) {
+export function CourseDetailClient({ course: initialCourse }: { course: Course }) {
+  const { data: publicCourses } = useCourses();
+  const course = publicCourses?.find((item) => item.slug === initialCourse.slug) || initialCourse;
   const [active, setActive] = useState("Overview");
   const [openModule, setOpenModule] = useState(0);
   const hasDiscount = course.originalPrice > course.price;
@@ -37,7 +39,7 @@ export function CourseDetailClient({ course }: { course: Course }) {
           </div>
           <div className="overflow-hidden rounded-sw border border-black-border bg-black-primary shadow-deep">
             <div className="relative flex aspect-video items-center justify-center">
-              <Image src={course.image} alt={`${course.title} course`} fill sizes="(min-width: 1024px) 40vw, 100vw" className="object-cover object-[center_32%]" priority />
+              <img src={course.image} alt={`${course.title} course`} className="h-full w-full object-cover object-[center_32%]" />
               <div className="absolute inset-0 bg-gradient-to-t from-black-primary/85 via-black-primary/20 to-transparent" />
               <PlayCircle size={72} className="relative z-10 text-gold-light drop-shadow" />
             </div>

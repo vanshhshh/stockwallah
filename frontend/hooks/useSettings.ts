@@ -18,6 +18,13 @@ export type PublicSettings = {
   contactEmail?: string;
   address?: string;
   mapLink?: string;
+  logoImage?: string;
+  homeHeroImage?: string;
+  founderImage?: string;
+  anshulImage?: string;
+  deepAryaImage?: string;
+  upiQrImage?: string;
+  courseFallbackImage?: string;
 };
 
 export function useSettings() {

@@ -4,7 +4,7 @@ import { prisma } from "../lib/prisma.js";
 
 const router = Router();
 
-function toPublicCourse(course: DbCourse) {
+function toPublicCourse(course: DbCourse, fallbackImage: string) {
   return {
     id: course.id,
     slug: course.slug,
@@ -16,7 +16,7 @@ function toPublicCourse(course: DbCourse) {
     mode: course.mode,
     price: course.price,
     originalPrice: course.originalPrice ?? course.price,
-    image: course.thumbnail || "/pankaj-yadav-founder-new.png",
+    image: course.thumbnail || fallbackImage,
     rating: Number(course.rating),
     students: course.enrollmentCount,
     lessons: Array.isArray(course.curriculum) ? course.curriculum.length : 0,
@@ -25,11 +25,15 @@ function toPublicCourse(course: DbCourse) {
 
 router.get("/", async (_req, res, next) => {
   try {
-    const courses = await prisma.course.findMany({
-      where: { active: true },
-      orderBy: [{ price: "asc" }, { id: "asc" }],
-    });
-    res.json({ courses: courses.map(toPublicCourse) });
+    const [courses, fallbackImageSetting] = await Promise.all([
+      prisma.course.findMany({
+        where: { active: true },
+        orderBy: [{ price: "asc" }, { id: "asc" }],
+      }),
+      prisma.siteSetting.findUnique({ where: { key: "courseFallbackImage" } }),
+    ]);
+    const fallbackImage = fallbackImageSetting?.value || "/pankaj-yadav-founder-new.png";
+    res.json({ courses: courses.map((course) => toPublicCourse(course, fallbackImage)) });
   } catch (error) {
     next(error);
   }

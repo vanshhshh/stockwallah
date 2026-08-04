@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CalendarPlus, Save } from "lucide-react";
+import { CalendarPlus, ImagePlus, Save } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { GoldButton } from "@/components/common/GoldButton";
+import { mediaSrc, readFileAsDataUrl } from "@/lib/media";
 
 type SettingsResponse = {
   settings: Record<string, string>;
@@ -27,6 +28,9 @@ export default function AdminSettingsPage() {
   const save = useMutation({
     mutationFn: () => api.put("/api/admin/settings", { settings }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["admin", "settings"] })
+  });
+  const uploadImage = useMutation({
+    mutationFn: (imageData: string) => api.post<{ imageUrl: string }>("/api/admin/settings/upload-image", { imageData })
   });
   const addSchedule = useMutation({
     mutationFn: () => api.post("/api/admin/settings/youtube-schedule", schedule),
@@ -53,6 +57,23 @@ export default function AdminSettingsPage() {
     ["appStoreUrl", "App Store URL"]
   ];
 
+  const imageFields = [
+    ["logoImage", "Logo image", "/stockwallah-logo.png"],
+    ["homeHeroImage", "Home hero image", "/home-hero-exact.png"],
+    ["founderImage", "Pankaj Yadav Sir image", "/pankaj-yadav-founder-new.png"],
+    ["anshulImage", "Anshul Sir image", "/team/anshul-yadav.png"],
+    ["deepAryaImage", "Deep Arya Sir image", "/team/deep-arya.png"],
+    ["upiQrImage", "UPI QR image", "/upi-qr.png"],
+    ["courseFallbackImage", "Default course image", "/pankaj-yadav-founder-new.png"]
+  ];
+
+  async function handleImageUpload(key: string, file: File | undefined) {
+    if (!file) return;
+    const imageData = await readFileAsDataUrl(file);
+    const response = await uploadImage.mutateAsync(imageData);
+    setSettings((current) => ({ ...current, [key]: response.data.imageUrl }));
+  }
+
   return (
     <div>
       <div className="mb-8">
@@ -69,6 +90,26 @@ export default function AdminSettingsPage() {
                 <input className="premium-focus mt-2 min-h-11 w-full rounded border border-black-border bg-black-primary px-3 text-white-primary" value={settings[key] || ""} onChange={(event) => setSettings({ ...settings, [key]: event.target.value })} />
               </label>
             ))}
+          </div>
+          <div className="mt-8 border-t border-black-border pt-6">
+            <h3 className="text-lg font-semibold text-white-primary">Site Images</h3>
+            <div className="mt-5 grid gap-5">
+              {imageFields.map(([key, label, fallback]) => (
+                <div key={key} className="grid gap-3 rounded border border-black-border bg-black-primary p-3 sm:grid-cols-[120px_1fr]">
+                  <div className="relative h-24 overflow-hidden rounded border border-black-border bg-black-elevated">
+                    <img src={mediaSrc(settings[key], fallback)} alt={label} className="h-full w-full object-contain" />
+                  </div>
+                  <label className="text-sm text-white-secondary">
+                    {label}
+                    <input className="premium-focus mt-2 min-h-11 w-full rounded border border-black-border bg-black-surface px-3 text-white-primary" value={settings[key] || ""} onChange={(event) => setSettings({ ...settings, [key]: event.target.value })} />
+                    <label className="premium-focus mt-3 inline-flex min-h-10 cursor-pointer items-center justify-center gap-2 rounded border border-gold-primary/45 px-3 text-sm font-semibold text-gold-light hover:bg-gold-muted">
+                      <ImagePlus size={16} /> Upload image
+                      <input type="file" accept="image/png,image/jpeg,image/webp" className="sr-only" onChange={(event) => handleImageUpload(key, event.target.files?.[0])} />
+                    </label>
+                  </label>
+                </div>
+              ))}
+            </div>
           </div>
           <GoldButton onClick={() => save.mutate()} className="mt-6">
             <Save size={16} /> Save Settings

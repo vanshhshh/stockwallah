@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { Clock, GraduationCap, MonitorPlay, Star } from "lucide-react";
 import type { Course } from "@/lib/content";
@@ -10,7 +9,7 @@ export function CourseCard({ course }: { course: Course }) {
   return (
     <article className="card group flex min-h-[400px] min-w-0 flex-col overflow-hidden transition hover:border-gold-primary/45 hover:shadow-gold sm:min-h-[420px]">
       <div className="relative h-48 overflow-hidden bg-black-elevated sm:h-56">
-        <Image src={course.image} alt={`${course.title} course`} fill sizes="(min-width: 1280px) 33vw, (min-width: 768px) 50vw, 100vw" className="object-cover object-[center_32%] transition duration-500 group-hover:scale-105" />
+        <img src={course.image} alt={`${course.title} course`} className="h-full w-full object-cover object-[center_32%] transition duration-500 group-hover:scale-105" />
         <div className="absolute inset-0 bg-gradient-to-t from-black-primary via-black-primary/20 to-transparent" />
         <div className="absolute bottom-4 left-4 rounded bg-black-primary/75 px-3 py-1 text-xs font-semibold text-gold-light backdrop-blur">{course.category}</div>
       </div>

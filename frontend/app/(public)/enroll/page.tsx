@@ -9,12 +9,18 @@ import { academyDisclaimer, contactInfo, courses } from "@/lib/content";
 import { GoldButton } from "@/components/common/GoldButton";
 import { cn } from "@/lib/utils";
 import { formatInr } from "@/lib/utils";
+import { useCourses } from "@/hooks/useCourses";
+import { useSettings } from "@/hooks/useSettings";
+import { mediaSrc } from "@/lib/media";
 
 const modes = ["online", "offline", "both"];
 
 function EnrollPageContent() {
   const searchParams = useSearchParams();
-  const selectedCourse = courses.find((course) => course.slug === searchParams.get("course")) || courses[0];
+  const { data: publicCourses = courses } = useCourses();
+  const { data: settings } = useSettings();
+  const selectedCourse = publicCourses.find((course) => course.slug === searchParams.get("course")) || publicCourses[0] || courses[0];
+  const upiQrImage = mediaSrc(settings?.upiQrImage, contactInfo.upiQrImage);
   const preselected = Boolean(searchParams.get("course"));
   const [step, setStep] = useState(preselected ? 2 : 1);
   const [success, setSuccess] = useState(false);
@@ -30,7 +36,7 @@ function EnrollPageContent() {
     query: ""
   });
 
-  const paymentCourse = courses.find((course) => course.title === form.course) || selectedCourse;
+  const paymentCourse = publicCourses.find((course) => course.title === form.course) || selectedCourse;
   const whatsappHref = `https://wa.me/${contactInfo.whatsappNumber}?text=${encodeURIComponent(
     `Hi, I have paid for ${form.course}. Student name: ${form.name || "[your name]"}. Please find my payment screenshot attached and confirm my enrollment.`
   )}`;
@@ -87,8 +93,8 @@ function EnrollPageContent() {
           </div>
 
           <div className="mx-auto w-full max-w-[360px] rounded-3xl bg-white p-3 shadow-[0_20px_50px_rgba(0,0,0,0.28)] sm:p-4">
-            {contactInfo.upiQrImage ? (
-              <img src={contactInfo.upiQrImage} alt="UPI QR" width={360} height={360} className="h-auto w-full rounded-2xl object-contain" />
+            {upiQrImage ? (
+              <img src={upiQrImage} alt="UPI QR" width={360} height={360} className="h-auto w-full rounded-2xl object-contain" />
             ) : (
               <QRCode value={contactInfo.upiPayUri} className="h-auto w-full" bgColor="#FFFFFF" fgColor="#000000" />
             )}
@@ -134,8 +140,8 @@ function EnrollPageContent() {
             <div className="mt-2 break-words text-xl font-bold leading-tight sm:text-2xl">UPI ID: {contactInfo.upiId}</div>
             <p className="mt-3 text-sm text-neutral-600">Scan this QR code with any UPI app to transfer the course fee.</p>
             <div className="mx-auto mt-5 inline-flex w-full max-w-56 rounded-2xl bg-white p-3 shadow-[0_10px_24px_rgba(0,0,0,0.08)] sm:p-4">
-              {contactInfo.upiQrImage ? (
-                <img src={contactInfo.upiQrImage} alt="UPI QR" width={224} height={224} className="h-auto w-full object-contain" />
+              {upiQrImage ? (
+                <img src={upiQrImage} alt="UPI QR" width={224} height={224} className="h-auto w-full object-contain" />
               ) : (
                 <QRCode value={contactInfo.upiPayUri} className="h-auto w-full" bgColor="#FFFFFF" fgColor="#000000" />
               )}
@@ -164,7 +170,7 @@ function EnrollPageContent() {
               <label className="text-sm text-white-secondary">
                 Course selection
                 <select className="premium-focus mt-2 min-h-12 w-full rounded border border-black-border bg-black-primary px-4 text-white-primary" value={form.course} onChange={(e) => setForm({ ...form, course: e.target.value })}>
-                  {courses.map((course) => (
+                  {publicCourses.map((course) => (
                     <option key={course.slug} value={course.title}>
                       {course.title}
                     </option>

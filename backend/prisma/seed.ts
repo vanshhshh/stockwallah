@@ -236,6 +236,13 @@ async function main() {
     telegramUrl: process.env.TELEGRAM_URL || "https://t.me/stockwallahacademy",
     playStoreUrl: process.env.PLAY_STORE_URL || "https://play.google.com/store/apps/details?id=com.lct.nbtcgqrtd",
     appStoreUrl: process.env.APP_STORE_URL || "",
+    logoImage: "/stockwallah-logo.png",
+    homeHeroImage: "/home-hero-exact.png",
+    founderImage: "/pankaj-yadav-founder-new.png",
+    anshulImage: "/team/anshul-yadav.png",
+    deepAryaImage: "/team/deep-arya.png",
+    upiQrImage: "/upi-qr.png",
+    courseFallbackImage: "/pankaj-yadav-founder-new.png",
   };
 
   for (const [key, value] of Object.entries(settings)) {

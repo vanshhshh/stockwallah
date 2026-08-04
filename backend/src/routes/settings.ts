@@ -18,6 +18,13 @@ const publicSettingKeys = [
   "contactEmail",
   "address",
   "mapLink",
+  "logoImage",
+  "homeHeroImage",
+  "founderImage",
+  "anshulImage",
+  "deepAryaImage",
+  "upiQrImage",
+  "courseFallbackImage",
 ];
 
 router.get("/public", async (_req, res, next) => {

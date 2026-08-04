@@ -1,5 +1,7 @@
-import Image from "next/image";
+"use client";
+
 import { BookOpenCheck, CandlestickChart, MapPin, ShieldCheck } from "lucide-react";
+import { useSettings } from "@/hooks/useSettings";
 import {
   academyDisclaimer,
   academyMission,
@@ -8,30 +10,7 @@ import {
   founderProfile,
   mentorProfile
 } from "@/lib/content";
-
-const teachers = [
-  {
-    name: founderProfile.name,
-    role: founderProfile.role,
-    image: founderProfile.image,
-    summary: founderProfile.summary,
-    points: ["Equity", "Derivatives", "Crypto + Forex"]
-  },
-  {
-    name: associateMentorProfile.name,
-    role: associateMentorProfile.role,
-    image: associateMentorProfile.image,
-    summary: associateMentorProfile.summary,
-    points: ["Stock market basics", "Futures", "Derivatives"]
-  },
-  {
-    name: mentorProfile.name,
-    role: mentorProfile.role,
-    image: mentorProfile.image,
-    summary: mentorProfile.summary,
-    points: ["SMC", "Order flow", "Scalping"]
-  }
-];
+import { mediaSrc } from "@/lib/media";
 
 const pillars = [
   { icon: CandlestickChart, label: "Real market learning" },
@@ -41,6 +20,31 @@ const pillars = [
 ];
 
 export default function AboutPage() {
+  const { data: settings } = useSettings();
+  const teachers = [
+    {
+      name: founderProfile.name,
+      role: founderProfile.role,
+      image: mediaSrc(settings?.founderImage, founderProfile.image),
+      summary: founderProfile.summary,
+      points: ["Equity", "Derivatives", "Crypto + Forex"]
+    },
+    {
+      name: associateMentorProfile.name,
+      role: associateMentorProfile.role,
+      image: mediaSrc(settings?.anshulImage, associateMentorProfile.image),
+      summary: associateMentorProfile.summary,
+      points: ["Stock market basics", "Futures", "Derivatives"]
+    },
+    {
+      name: mentorProfile.name,
+      role: mentorProfile.role,
+      image: mediaSrc(settings?.deepAryaImage, mentorProfile.image),
+      summary: mentorProfile.summary,
+      points: ["SMC", "Order flow", "Scalping"]
+    }
+  ];
+
   return (
     <section>
       <div className="border-b border-black-border bg-black-surface/35">
@@ -79,13 +83,10 @@ export default function AboutPage() {
           {teachers.map((teacher) => (
             <article key={teacher.name} className="card overflow-hidden">
               <div className="relative aspect-[4/5] bg-black-primary">
-                <Image
+                <img
                   src={teacher.image}
                   alt={`${teacher.name}, ${teacher.role} at StockWallah`}
-                  fill
-                  sizes="(min-width: 1024px) 33vw, 100vw"
-                  className="object-cover object-top"
-                  priority={teacher.role === "Founder"}
+                  className="h-full w-full object-cover object-top"
                 />
                 <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black-primary to-transparent" />
               </div>

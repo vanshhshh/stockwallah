@@ -79,6 +79,7 @@ router.patch("/:id", async (req, res, next) => {
         price: z.coerce.number().optional(),
         originalPrice: z.coerce.number().nullable().optional(),
         description: z.string().optional(),
+        thumbnail: z.string().optional(),
         enrollmentCount: z.coerce.number().optional(),
       })
       .parse(req.body);
