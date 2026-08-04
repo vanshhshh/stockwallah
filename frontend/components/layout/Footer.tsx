@@ -1,25 +1,35 @@
+"use client";
+
 import Link from "next/link";
 import { MapPin, Mail, Phone } from "lucide-react";
 import { BrandSocialLink } from "@/components/common/BrandSocialLink";
 import { LogoMark } from "@/components/common/LogoMark";
 import { academyDisclaimer, academyMission, contactInfo, socialLinks } from "@/lib/content";
+import { useSettings } from "@/hooks/useSettings";
 
 export function Footer() {
+  const { data: settings } = useSettings();
+  const footerSocialLinks = [
+    { href: settings?.youtubeUrl || socialLinks.youtube, label: "YouTube" },
+    { href: settings?.instagramUrl || socialLinks.instagram, label: "Instagram" },
+    { href: settings?.facebookUrl || socialLinks.facebook, label: "Facebook" },
+    { href: settings?.linkedinUrl || socialLinks.linkedin, label: "LinkedIn" }
+  ];
+  const address = settings?.address || contactInfo.address;
+  const email = settings?.contactEmail || contactInfo.email;
+  const phone = settings?.whatsappNumber || contactInfo.phoneDisplay;
+  const phoneLink = phone.replace(/[^\d+]/g, "");
+
   return (
     <footer className="border-t border-black-border bg-black-surface">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 md:grid-cols-2 lg:grid-cols-4">
-        <div>
+        <div className="min-w-0">
           <LogoMark />
           <p className="mt-4 text-sm leading-6 text-white-secondary">
             {academyMission}
           </p>
           <div className="mt-5 flex gap-3">
-            {[
-              { href: socialLinks.youtube, label: "YouTube" },
-              { href: socialLinks.instagram, label: "Instagram" },
-              { href: socialLinks.facebook, label: "Facebook" },
-              { href: socialLinks.linkedin, label: "LinkedIn" }
-            ].map(({ href, label }) => (
+            {footerSocialLinks.map(({ href, label }) => (
               <BrandSocialLink key={label} href={href} label={label} compact />
             ))}
           </div>
@@ -51,21 +61,21 @@ export function Footer() {
             </Link>
           </div>
         </div>
-        <div>
+        <div className="min-w-0">
           <h3 className="mb-4 text-base font-semibold text-white-primary">Contact</h3>
           <div className="grid gap-3 text-sm text-white-secondary">
-            <p className="flex gap-2">
-              <MapPin size={18} className="shrink-0 text-gold-primary" /> {contactInfo.addressShort}
+            <p className="flex min-w-0 gap-2 break-words">
+              <MapPin size={18} className="shrink-0 text-gold-primary" /> <span className="min-w-0 break-words">{address}</span>
             </p>
-            <a className="flex gap-2 hover:text-gold-light" href={`tel:${contactInfo.phoneLink}`}>
-              <Phone size={18} className="text-gold-primary" /> {contactInfo.phoneDisplay}
+            <a className="flex min-w-0 gap-2 break-words hover:text-gold-light" href={`tel:${phoneLink}`}>
+              <Phone size={18} className="shrink-0 text-gold-primary" /> <span className="min-w-0 break-words">{phone}</span>
             </a>
-            <a className="flex gap-2 hover:text-gold-light" href={`mailto:${contactInfo.email}`}>
-              <Mail size={18} className="text-gold-primary" /> {contactInfo.email}
+            <a className="flex min-w-0 gap-2 break-words hover:text-gold-light" href={`mailto:${email}`}>
+              <Mail size={18} className="shrink-0 text-gold-primary" /> <span className="min-w-0 break-all">{email}</span>
             </a>
           </div>
-          <div className="mt-4 inline-flex items-center gap-2 rounded border border-gold-primary/30 bg-gold-muted px-3 py-2 text-xs text-gold-light">
-            <MapPin size={14} /> {contactInfo.address}
+          <div className="mt-4 flex max-w-full items-start gap-2 rounded border border-gold-primary/30 bg-gold-muted px-3 py-2 text-xs leading-5 text-gold-light">
+            <MapPin size={14} className="mt-0.5 shrink-0" /> <span className="min-w-0 break-words">{address}</span>
           </div>
         </div>
       </div>
