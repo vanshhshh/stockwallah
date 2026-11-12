@@ -7,6 +7,7 @@ import { HistoricalCalendar } from "@/components/levels/HistoricalCalendar";
 import { LevelCard } from "@/components/levels/LevelCard";
 import { LevelsChart } from "@/components/levels/LevelsChart";
 import { useLevels } from "@/hooks/useLevels";
+import { useIntradayChart } from "@/hooks/useMarketData";
 import { cn, todayIso } from "@/lib/utils";
 
 const symbols = [
@@ -19,7 +20,12 @@ export default function LevelsPage() {
   const [symbol, setSymbol] = useState("NIFTY");
   const [date, setDate] = useState(todayIso());
   const { data, isLoading, isError, refetch, isFetching } = useLevels(symbol, date);
+  const chart = useIntradayChart(symbol);
   const levels = data?.levels || [];
+
+  async function refresh() {
+    await Promise.all([refetch(), chart.refetch()]);
+  }
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-10 sm:py-12">
@@ -43,9 +49,9 @@ export default function LevelsPage() {
           ))}
           <button
             className="premium-focus col-span-2 inline-flex min-h-11 items-center justify-center gap-2 rounded border border-black-border bg-black-surface px-4 text-sm text-white-secondary hover:border-gold-primary/60 sm:col-span-1"
-            onClick={() => refetch()}
+            onClick={refresh}
           >
-            <RefreshCw size={16} className={isFetching ? "animate-spin" : ""} /> Refresh
+            <RefreshCw size={16} className={isFetching || chart.isFetching ? "animate-spin" : ""} /> Refresh
           </button>
         </div>
       </div>
@@ -57,7 +63,14 @@ export default function LevelsPage() {
       ) : (
         <div className="grid gap-6">
           <DailySummary levels={levels} symbol={symbol} />
-          <LevelsChart levels={levels} symbol={symbol} />
+          <LevelsChart
+            key={symbol}
+            levels={levels}
+            chart={chart.data?.symbol === symbol ? chart.data : undefined}
+            isLoading={chart.isLoading}
+            isError={chart.isError}
+            isFetching={chart.isFetching}
+          />
           <div className="grid gap-5 lg:grid-cols-2">
             {levels.map((level) => (
               <LevelCard key={level.id} level={level} symbol={symbol} />

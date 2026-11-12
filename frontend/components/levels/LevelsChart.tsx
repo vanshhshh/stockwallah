@@ -1,8 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
-import { ColorType, createChart, LineStyle, type IChartApi, type ISeriesApi, type UTCTimestamp } from "lightweight-charts";
+import { useMemo } from "react";
+import { LineStyle } from "lightweight-charts";
+import { CandleChart, type ChartPriceLine } from "@/components/market/CandleChart";
 import type { TradingLevel } from "@/hooks/useLevels";
+import type { IntradayChart } from "@/hooks/useMarketData";
+import { cn, formatNumber } from "@/lib/utils";
 
 const colors: Record<TradingLevel["levelType"], { color: string; style: LineStyle }> = {
   "Strong Resistance": { color: "#FF4444", style: LineStyle.Dashed },
@@ -12,102 +15,71 @@ const colors: Record<TradingLevel["levelType"], { color: string; style: LineStyl
   CPR: { color: "#C9A84C", style: LineStyle.Solid }
 };
 
-function generateOhlc(symbol: string) {
-  const baseBySymbol: Record<string, number> = {
-    NIFTY: 24200,
-    NIFTYFUT: 24260,
-    BANKNIFTY: 52200
-  };
-  const base = baseBySymbol[symbol] || baseBySymbol.NIFTY;
-  const isBankNifty = symbol === "BANKNIFTY";
-  const today = new Date();
-  today.setHours(9, 15, 0, 0);
-  return Array.from({ length: 76 }).map((_, index) => {
-    const time = new Date(today.getTime() + index * 5 * 60 * 1000);
-    const wave = Math.sin(index / 5) * (isBankNifty ? 95 : 35);
-    const trend = index * (isBankNifty ? 3.8 : 1.3);
-    const open = base + wave + trend + Math.cos(index) * 12;
-    const close = open + Math.sin(index * 1.7) * (isBankNifty ? 34 : 12);
-    return {
-      time: Math.floor(time.getTime() / 1000) as UTCTimestamp,
-      open,
-      high: Math.max(open, close) + (isBankNifty ? 48 : 18),
-      low: Math.min(open, close) - (isBankNifty ? 42 : 15),
-      close
-    };
-  });
-}
+type Props = {
+  levels: TradingLevel[];
+  chart?: IntradayChart;
+  isLoading: boolean;
+  isError: boolean;
+  isFetching: boolean;
+};
 
-export function LevelsChart({ levels, symbol }: { levels: TradingLevel[]; symbol: string }) {
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const chartRef = useRef<IChartApi | null>(null);
-  const seriesRef = useRef<ISeriesApi<"Candlestick"> | null>(null);
-  const data = useMemo(() => generateOhlc(symbol), [symbol]);
-
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    const chart = createChart(container, {
-      height: 500,
-      width: container.clientWidth,
-      layout: {
-        background: { type: ColorType.Solid, color: "#0A0A0A" },
-        textColor: "#B0B0B0"
-      },
-      grid: {
-        vertLines: { color: "#1A1A1A" },
-        horzLines: { color: "#1A1A1A" }
-      },
-      rightPriceScale: { borderColor: "#2A2A2A" },
-      timeScale: { borderColor: "#2A2A2A", timeVisible: true, secondsVisible: false },
-      crosshair: { mode: 1 }
-    });
-
-    const series = chart.addCandlestickSeries({
-      upColor: "#00D084",
-      downColor: "#FF4444",
-      borderVisible: false,
-      wickUpColor: "#00D084",
-      wickDownColor: "#FF4444"
-    });
-    series.setData(data);
-    chart.timeScale().fitContent();
-    chartRef.current = chart;
-    seriesRef.current = series;
-
-    const observer = new ResizeObserver(() => {
-      chart.applyOptions({ width: container.clientWidth });
-    });
-    observer.observe(container);
-
-    return () => {
-      observer.disconnect();
-      chart.remove();
-      chartRef.current = null;
-      seriesRef.current = null;
-    };
-  }, [data]);
-
-  useEffect(() => {
-    const series = seriesRef.current;
-    if (!series) return;
-    levels.forEach((level) => {
-      const config = colors[level.levelType];
-      series.createPriceLine({
+export function LevelsChart({ levels, chart, isLoading, isError, isFetching }: Props) {
+  const priceLines = useMemo<ChartPriceLine[]>(
+    () =>
+      levels.map((level) => ({
         price: level.levelPrice,
-        color: config.color,
-        lineWidth: 2,
-        lineStyle: config.style,
-        axisLabelVisible: true,
+        color: colors[level.levelType]?.color || "#C9A84C",
+        style: colors[level.levelType]?.style,
         title: `${level.levelPrice.toLocaleString("en-IN")} ${level.levelType}`
-      });
-    });
-  }, [levels]);
+      })),
+    [levels]
+  );
+
+  const positive = (chart?.change ?? 0) >= 0;
+  const isOpen = chart?.marketStatus.isOpen;
 
   return (
-    <div className="overflow-x-auto rounded-sw border border-black-border bg-black-primary scrollbar-thin">
-      <div ref={containerRef} className="min-w-[720px]" />
+    <div className="overflow-hidden rounded-sw border border-black-border bg-black-primary">
+      <div className="flex flex-col gap-3 border-b border-black-border px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex min-w-0 flex-wrap items-baseline gap-x-3 gap-y-1">
+          <span className="text-sm text-white-muted">{chart?.label || "Live price"}</span>
+          <span className="text-2xl font-bold text-white-primary">{chart ? formatNumber(chart.price) : "--"}</span>
+          {chart ? (
+            <span className={cn("text-sm font-semibold", positive ? "text-profit" : "text-loss")}>
+              {positive ? "+" : ""}
+              {formatNumber(chart.change)} ({positive ? "+" : ""}
+              {formatNumber(chart.pChange)}%)
+            </span>
+          ) : null}
+        </div>
+        <div className="flex flex-wrap items-center gap-3 text-xs text-white-muted">
+          <span className="inline-flex items-center gap-2">
+            <span className={cn("h-2 w-2 rounded-full", isOpen ? "animate-pulse bg-profit" : "bg-white-muted")} />
+            {isOpen ? "LIVE" : "MARKET CLOSED"}
+          </span>
+          {chart ? <span>H {formatNumber(chart.high)} · L {formatNumber(chart.low)}</span> : null}
+          {chart?.marketTime ? (
+            <span>
+              Last tick {new Date(chart.marketTime).toLocaleTimeString("en-IN", { timeZone: "Asia/Kolkata", hour: "2-digit", minute: "2-digit" })} IST
+              {isFetching ? " · updating…" : ""}
+            </span>
+          ) : null}
+        </div>
+      </div>
+      {chart?.proxy ? (
+        <div className="border-b border-black-border bg-gold-muted px-4 py-2 text-xs text-gold-light">
+          Candles show Nifty 50 spot; futures levels may sit above spot by the futures premium.
+        </div>
+      ) : null}
+      <div className="overflow-x-auto scrollbar-thin">
+        {isLoading ? (
+          <div className="h-[500px] animate-pulse bg-black-elevated" />
+        ) : isError && !chart ? (
+          <div className="flex h-[300px] items-center justify-center p-6 text-sm text-white-secondary">Live chart is unavailable right now. Retrying automatically…</div>
+        ) : (
+          <CandleChart candles={chart?.candles || []} gmtOffset={chart?.gmtOffset} priceLines={priceLines} />
+        )}
+      </div>
     </div>
   );
 }

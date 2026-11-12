@@ -14,6 +14,9 @@ export type IndexQuote = {
   pChange: number;
   high: number;
   low: number;
+  previousClose?: number;
+  sparkline?: number[];
+  marketTime?: string | null;
 };
 
 export type NewsArticle = {

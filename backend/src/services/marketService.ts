@@ -182,42 +182,86 @@ export function getMarketStatus() {
   return { isOpen, timestamp: now.toISOString() };
 }
 
+type YahooChartPayload = {
+  chart?: {
+    result?: Array<{
+      meta?: Record<string, unknown>;
+      timestamp?: number[];
+      indicators?: {
+        quote?: Array<{ open?: Array<number | null>; high?: Array<number | null>; low?: Array<number | null>; close?: Array<number | null> }>;
+      };
+    }>;
+  };
+};
+
+export type Candle = { time: number; open: number; high: number; low: number; close: number };
+
+async function fetchYahooChart(yahooSymbol: string, range = "1d", interval = "1m") {
+  const response = await fetch(
+    `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(yahooSymbol)}?range=${range}&interval=${interval}`,
+    { headers: { "User-Agent": "Mozilla/5.0 StockWallah Market Reader" } },
+  );
+  if (!response.ok) throw new Error(`Yahoo chart failed for ${yahooSymbol} (${response.status})`);
+  const payload = (await response.json()) as YahooChartPayload;
+  const result = payload.chart?.result?.[0];
+  if (!result) throw new Error(`Yahoo chart returned no result for ${yahooSymbol}`);
+
+  const meta = result.meta || {};
+  const quote = result.indicators?.quote?.[0] || {};
+  const candles: Candle[] = [];
+  (result.timestamp || []).forEach((time, index) => {
+    const open = quote.open?.[index];
+    const high = quote.high?.[index];
+    const low = quote.low?.[index];
+    const close = quote.close?.[index];
+    if (typeof open === "number" && typeof high === "number" && typeof low === "number" && typeof close === "number") {
+      candles.push({ time, open, high, low, close });
+    }
+  });
+
+  const price = Number(meta.regularMarketPrice || candles.at(-1)?.close || 0);
+  const previousClose = Number(meta.chartPreviousClose || meta.previousClose || price);
+  return {
+    candles,
+    price,
+    previousClose,
+    gmtOffset: Number(meta.gmtoffset ?? 19800),
+    dayHigh: candles.length ? Math.max(...candles.map((candle) => candle.high)) : Number(meta.regularMarketDayHigh || price),
+    dayLow: candles.length ? Math.min(...candles.map((candle) => candle.low)) : Number(meta.regularMarketDayLow || price),
+    marketTime: meta.regularMarketTime ? new Date(Number(meta.regularMarketTime) * 1000).toISOString() : null,
+  };
+}
+
+function sparklineFrom(candles: Candle[], points = 60) {
+  if (candles.length <= points) return candles.map((candle) => candle.close);
+  const step = candles.length / points;
+  const sampled = Array.from({ length: points }, (_, index) => candles[Math.floor(index * step)].close);
+  sampled[sampled.length - 1] = candles[candles.length - 1].close;
+  return sampled;
+}
+
+type OverviewResult = { indices: IndexQuote[]; timestamp: string; marketStatus: ReturnType<typeof getMarketStatus>; source: "live" | "fallback" };
+
 export async function getMarketOverview() {
-  const cached = await cacheGet<{ indices: IndexQuote[]; timestamp: string; marketStatus: ReturnType<typeof getMarketStatus> }>("market:overview");
+  const cached = await cacheGet<OverviewResult>("market:overview");
   if (cached) return cached;
 
   try {
     const chartResults = await Promise.all(
-      yahooChartSymbols.map(async (item) => {
-        const response = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(item.yahoo)}?range=1d&interval=1m`, {
-          headers: { "User-Agent": "Mozilla/5.0 StockWallah Market Reader" },
-        });
-        if (!response.ok) throw new Error(`Yahoo chart failed for ${item.symbol}`);
-        const payload = (await response.json()) as {
-          chart?: {
-            result?: Array<{
-              meta?: Record<string, unknown>;
-              indicators?: { quote?: Array<{ high?: number[]; low?: number[] }> };
-            }>;
-          };
-        };
-        const result = payload.chart?.result?.[0];
-        const meta = result?.meta || {};
-        const highs = result?.indicators?.quote?.[0]?.high?.filter((value) => Number.isFinite(value)) || [];
-        const lows = result?.indicators?.quote?.[0]?.low?.filter((value) => Number.isFinite(value)) || [];
-        const price = Number(meta.regularMarketPrice || 0);
-        const previousClose = Number(meta.chartPreviousClose || meta.previousClose || price);
-        const change = price - previousClose;
-        const pChange = previousClose ? (change / previousClose) * 100 : 0;
-
+      yahooChartSymbols.map(async (item): Promise<IndexQuote> => {
+        const chart = await fetchYahooChart(item.yahoo, "1d", "1m");
+        const change = chart.price - chart.previousClose;
         return {
           symbol: item.symbol,
           label: item.label,
-          price,
+          price: chart.price,
           change,
-          pChange,
-          high: highs.length ? Math.max(...highs) : Number(meta.regularMarketDayHigh || price),
-          low: lows.length ? Math.min(...lows) : Number(meta.regularMarketDayLow || price),
+          pChange: chart.previousClose ? (change / chart.previousClose) * 100 : 0,
+          high: chart.dayHigh,
+          low: chart.dayLow,
+          previousClose: chart.previousClose,
+          sparkline: sparklineFrom(chart.candles),
+          marketTime: chart.marketTime,
         };
       }),
     );
@@ -227,8 +271,8 @@ export async function getMarketOverview() {
       throw new Error("Yahoo chart returned incomplete index data");
     }
 
-    const result = { indices, timestamp: new Date().toISOString(), marketStatus: getMarketStatus() };
-    await cacheSet("market:overview", result, 60);
+    const result: OverviewResult = { indices, timestamp: new Date().toISOString(), marketStatus: getMarketStatus(), source: "live" };
+    await cacheSet("market:overview", result, 20);
     return result;
   } catch (chartError) {
     logger.warn("Yahoo chart overview failed; trying yahoo-finance2", { error: chartError instanceof Error ? chartError.message : chartError });
@@ -249,13 +293,111 @@ export async function getMarketOverview() {
       };
     });
 
-    const result = { indices, timestamp: new Date().toISOString(), marketStatus: getMarketStatus() };
-    await cacheSet("market:overview", result, 2 * 60);
+    const result: OverviewResult = { indices, timestamp: new Date().toISOString(), marketStatus: getMarketStatus(), source: "live" };
+    await cacheSet("market:overview", result, 30);
     return result;
   } catch (error) {
     logger.warn("Market overview failed; using fallback", { error: error instanceof Error ? error.message : error });
-    const result = { indices: fallbackOverview, timestamp: new Date().toISOString(), marketStatus: getMarketStatus() };
-    await cacheSet("market:overview", result, 60);
+    const result: OverviewResult = { indices: fallbackOverview, timestamp: new Date().toISOString(), marketStatus: getMarketStatus(), source: "fallback" };
+    await cacheSet("market:overview", result, 30);
     return result;
   }
+}
+
+// Yahoo has no free intraday feed for Nifty futures, so the futures chart plots the Nifty 50 spot series.
+const chartSymbolMap: Record<string, { yahoo: string; label: string; proxy?: boolean }> = {
+  NIFTY: { yahoo: "^NSEI", label: "Nifty 50" },
+  NIFTYFUT: { yahoo: "^NSEI", label: "Nifty 50 (spot)", proxy: true },
+  BANKNIFTY: { yahoo: "^NSEBANK", label: "Bank Nifty" },
+  SENSEX: { yahoo: "^BSESN", label: "Sensex" },
+  INDIAVIX: { yahoo: "^INDIAVIX", label: "India VIX" },
+};
+
+const allowedIntervals = new Set(["1m", "5m", "15m"]);
+
+function sessionDate(time: number, gmtOffset: number) {
+  return new Date((time + gmtOffset) * 1000).toISOString().slice(0, 10);
+}
+
+export async function getIntradayChart(symbol: string, interval = "5m") {
+  const key = symbol.toUpperCase();
+  const config = chartSymbolMap[key];
+  if (!config) throw Object.assign(new Error(`Unsupported chart symbol: ${symbol}`), { status: 400 });
+  const safeInterval = allowedIntervals.has(interval) ? interval : "5m";
+  const cacheKey = `market:chart:${key}:${safeInterval}`;
+  const cached = await cacheGet<Record<string, unknown>>(cacheKey);
+  if (cached) return cached;
+
+  let chart = await fetchYahooChart(config.yahoo, "1d", safeInterval);
+  if (!chart.candles.length) {
+    // Before the open or on holidays the 1d range can be empty; show the most recent session instead.
+    chart = await fetchYahooChart(config.yahoo, "5d", safeInterval);
+    const last = chart.candles.at(-1);
+    if (last) {
+      const lastDay = sessionDate(last.time, chart.gmtOffset);
+      chart.candles = chart.candles.filter((candle) => sessionDate(candle.time, chart.gmtOffset) === lastDay);
+    }
+  }
+
+  const change = chart.price - chart.previousClose;
+  const result = {
+    symbol: key,
+    label: config.label,
+    proxy: Boolean(config.proxy),
+    interval: safeInterval,
+    gmtOffset: chart.gmtOffset,
+    price: chart.price,
+    previousClose: chart.previousClose,
+    change,
+    pChange: chart.previousClose ? (change / chart.previousClose) * 100 : 0,
+    high: chart.dayHigh,
+    low: chart.dayLow,
+    candles: chart.candles,
+    marketTime: chart.marketTime,
+    marketStatus: getMarketStatus(),
+    timestamp: new Date().toISOString(),
+  };
+  await cacheSet(cacheKey, result, 20);
+  return result;
+}
+
+const sectorSymbols = [
+  { yahoo: "^NSEBANK", name: "Bank" },
+  { yahoo: "^CNXIT", name: "IT" },
+  { yahoo: "^CNXAUTO", name: "Auto" },
+  { yahoo: "^CNXPHARMA", name: "Pharma" },
+  { yahoo: "^CNXFMCG", name: "FMCG" },
+  { yahoo: "^CNXMETAL", name: "Metal" },
+  { yahoo: "^CNXENERGY", name: "Energy" },
+  { yahoo: "^CNXREALTY", name: "Realty" },
+  { yahoo: "^CNXPSUBANK", name: "PSU Bank" },
+  { yahoo: "^CNXMEDIA", name: "Media" },
+  { yahoo: "^CNXINFRA", name: "Infra" },
+  { yahoo: "NIFTY_FIN_SERVICE.NS", name: "Fin Services" },
+];
+
+type SectorResult = { sectors: Array<{ name: string; price: number; change: number }>; timestamp: string };
+
+export async function getSectorPerformance() {
+  const cached = await cacheGet<SectorResult>("market:sectors");
+  if (cached) return cached;
+
+  const settled = await Promise.allSettled(
+    sectorSymbols.map(async (item) => {
+      const chart = await fetchYahooChart(item.yahoo, "1d", "15m");
+      return {
+        name: item.name,
+        price: chart.price,
+        change: chart.previousClose ? ((chart.price - chart.previousClose) / chart.previousClose) * 100 : 0,
+      };
+    }),
+  );
+  const sectors = settled
+    .flatMap((entry) => (entry.status === "fulfilled" && entry.value.price > 0 ? [entry.value] : []))
+    .sort((a, b) => b.change - a.change);
+  if (!sectors.length) throw new Error("Sector data unavailable");
+
+  const result: SectorResult = { sectors, timestamp: new Date().toISOString() };
+  await cacheSet("market:sectors", result, 60);
+  return result;
 }

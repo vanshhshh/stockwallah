@@ -1,6 +1,7 @@
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
 import type { IndexQuote } from "@/hooks/useMarketData";
 import { cn, formatNumber } from "@/lib/utils";
+import { Sparkline } from "./Sparkline";
 
 export function IndexCard({ quote }: { quote: IndexQuote }) {
   const positive = quote.change >= 0;
@@ -21,6 +22,11 @@ export function IndexCard({ quote }: { quote: IndexQuote }) {
         {formatNumber(quote.change)} ({positive ? "+" : ""}
         {formatNumber(quote.pChange)}%)
       </div>
+      {quote.sparkline?.length ? (
+        <div className="mt-4">
+          <Sparkline values={quote.sparkline} baseline={quote.previousClose} positive={positive} />
+        </div>
+      ) : null}
       <div className="mt-5 grid grid-cols-2 gap-2 text-xs text-white-muted sm:gap-3">
         <div className="rounded bg-black-primary p-2 sm:p-3">High: {formatNumber(quote.high)}</div>
         <div className="rounded bg-black-primary p-2 sm:p-3">Low: {formatNumber(quote.low)}</div>

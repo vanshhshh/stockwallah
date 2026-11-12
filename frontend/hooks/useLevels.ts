@@ -29,7 +29,9 @@ export function useLevels(symbol: string, date = todayIso()) {
         summary: { total: number; targetsHit: number; stoplossHit: number; open: number; accuracy: number };
       }>("/api/levels", { params: { symbol, date } });
       return data;
-    }
+    },
+    // Today's levels get marked as hit during the session, so keep them fresh.
+    refetchInterval: date === todayIso() ? 60_000 : false
   });
 }
 
