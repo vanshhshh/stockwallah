@@ -46,7 +46,13 @@ jobs:
 
             cd ../frontend
             npm ci --include=dev
-            npm run build
+            # Build into a separate folder so the running site keeps serving its
+            # current assets; swap it in only after the build succeeds.
+            rm -rf .next-build
+            NEXT_DIST_DIR=.next-build npm run build
+            rm -rf .next.old
+            if [ -d .next ]; then mv .next .next.old; fi
+            mv .next-build .next
 
             cd ..
             pm2 restart stockwallah-backend stockwallah-frontend
@@ -55,7 +61,17 @@ jobs:
             nginx -t
             systemctl reload nginx
 
-            curl -fsS http://127.0.0.1:3000/ >/dev/null
-            curl -fsS http://127.0.0.1:4000/health >/dev/null
-            curl -fsS http://127.0.0.1:4000/api/settings/public >/dev/null
+            # Give the restarted processes time to start listening.
+            wait_for() {
+              for attempt in $(seq 1 30); do
+                if curl -fsS "$1" >/dev/null; then return 0; fi
+                sleep 2
+              done
+              echo "Health check failed: $1" >&2
+              return 1
+            }
+            wait_for http://127.0.0.1:3000/
+            wait_for http://127.0.0.1:4000/health
+            wait_for http://127.0.0.1:4000/api/settings/public
+            rm -rf frontend/.next.old
           REMOTE
